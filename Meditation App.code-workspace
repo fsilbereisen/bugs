@@ -1,0 +1,32 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "launch": {
+        "configurations": [
+            {
+                "type": "java",
+                "name": "Launch Meditation App",
+                "request": "launch",
+                "mainClass": "com.kiwimeaty.apps.meditation/com.kiwimeaty.apps.meditation.Main",
+                "projectName": "meditation"
+            }
+        ],
+    },
+    "settings": {
+        "java.checkstyle.configuration": "${workspaceFolder}/checkstyle-rules.xml",
+        "java.checkstyle.version": "8.41.1",
+        "maven.terminal.favorites": [
+            {
+                "alias": "Build & Test",
+                "command": "clean verify"
+            },
+            {
+                "alias": "Build & Test (update snapshots)",
+                "command": "-U clean verify"
+            }
+        ]
+    },
+}
