@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:controller="com.kiwimeaty.apps.meditation.MeditationController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="349.0" prefWidth="502.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+         <tabs>
+            <Tab text="Basics">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Accordion prefHeight="293.0" prefWidth="502.0">
+                           <panes>
+                              <TitledPane fx:id="basics01" animated="false" text="Take 10">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox prefHeight="217.71428571428572" prefWidth="500.57142857142856" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <SplitPane dividerPositions="0.3">
+                                                   <items>
+                                                      <TextField prefHeight="25.0" prefWidth="142.0" text="01" />
+                                                      <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="296.0">
+                                                         <buttons>
+                                                            <Button fx:id="basics01Stop" mnemonicParsing="false" text="Stop" onAction="#stop" />
+                                                            <Button fx:id="basics01Pause" mnemonicParsing="false" text="Pause" onAction="#pause" />
+                                                            <Button fx:id="basics01Start" mnemonicParsing="false" text="Start" onAction="#start" />
+                                                         </buttons>
+                                                      </ButtonBar>
+                                                   </items>
+                                                </SplitPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Take 15">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Take 20">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Discovery">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Accordion prefHeight="293.0" prefWidth="502.0">
+                           <panes>
+                              <TitledPane animated="false" text="Body">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Emotion">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="State of mind">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Resistence or Indulgence">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+   <top>
+      <TextField alignment="CENTER" text="Meditation" BorderPane.alignment="CENTER" />
+   </top>
+</BorderPane>

@@ -1,0 +1,21 @@
+/tracks
+
+# VSCode
+/.settings/
+/.vscode/
+
+# Eclipse
+/.classpath
+/.project
+
+# IntelliJ project configuration
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+/target/
+log/
