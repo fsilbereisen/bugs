@@ -3,7 +3,7 @@ module com.kiwimeaty.apps.meditation {
     requires javafx.fxml;
 
     requires javafx.controls;
-    requires javafx.media;
+    requires transitive javafx.media;
 
     requires transitive javafx.graphics;
 

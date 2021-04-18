@@ -16,8 +16,8 @@
         ],
     },
     "settings": {
-        "java.checkstyle.configuration": "${workspaceFolder}/checkstyle-rules.xml",
-        "java.checkstyle.version": "8.41.1",
+        // "java.checkstyle.configuration": "${workspaceFolder}/checkstyle-rules.xml",
+        // "java.checkstyle.version": "8.41.1",
         "maven.terminal.favorites": [
             {
                 "alias": "Build & Test",
@@ -27,6 +27,7 @@
                 "alias": "Build & Test (update snapshots)",
                 "command": "-U clean verify"
             }
-        ]
+        ],
+        "java.configuration.updateBuildConfiguration": "interactive"
     },
 }
