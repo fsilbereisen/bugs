@@ -21,11 +21,11 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Accordion prefHeight="293.0" prefWidth="502.0">
+                        <Accordion fx:id="basics" prefHeight="293.0" prefWidth="502.0">
                            <panes>
-                              <TitledPane fx:id="basics01" animated="false" text="Take 10">
+                              <TitledPane fx:id="basics01" animated="true" text="Take 10">
                                  <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <AnchorPane>
                                        <children>
                                           <VBox prefHeight="217.71428571428572" prefWidth="500.57142857142856" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
@@ -47,20 +47,6 @@
                                     </AnchorPane>
                                  </content>
                               </TitledPane>
-                              <TitledPane animated="false" text="Take 15">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                       <children>
-                                          <ListView fx:id="basics02list" prefHeight="216.8" prefWidth="500.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane animated="false" text="Take 20">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </TitledPane>
                            </panes>
                         </Accordion>
                      </children>
@@ -71,30 +57,7 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Accordion prefHeight="293.0" prefWidth="502.0">
-                           <panes>
-                              <TitledPane animated="false" text="Body">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </TitledPane>
-                              <TitledPane animated="false" text="Emotion">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </TitledPane>
-                              <TitledPane animated="false" text="State of mind">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </TitledPane>
-                              <TitledPane animated="false" text="Resistence or Indulgence">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </TitledPane>
-                           </panes>
-                        </Accordion>
+                        <Accordion fx:id="discovery" prefHeight="293.0" prefWidth="502.0"></Accordion>
                      </children>
                   </AnchorPane>
                </content>
