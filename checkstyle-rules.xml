@@ -45,6 +45,11 @@
 
     <module name="TreeWalker">
 
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE:OFF" />
+            <property name="onCommentFormat" value="CHECKSTYLE:ON" />
+        </module>
+
         <!-- Validates abbreviations (consecutive capital letters) length in identifier name, it also allows to enforce camel case naming. -->
         <!-- <module name="AbbreviationAsWordInName" /> -->
 
@@ -70,7 +75,7 @@
         <module name="ArrayTypeStyle" />
 
         <!-- Checks the order of javadoc block-tags or javadoc tags. -->
-        <!-- <module name="AtclauseOrder" /> -->
+        <module name="AtclauseOrder" />
 
         <!-- Detects double brace initialization. -->
         <module name="AvoidDoubleBraceInitialization" />
@@ -257,19 +262,21 @@
         <module name="InvalidJavadocPosition" />
 
         <!-- Checks that a javadoc block tag appears only at the beginning of a line, ignoring leading asterisks and white space. -->
-        <!-- <module name="JavadocBlockTagLocation" /> -->
+        <module name="JavadocBlockTagLocation" />
 
         <!-- Checks that the Javadoc content begins from the same position for all Javadoc comments in the project. -->
-        <!-- <module name="JavadocContentLocation" /> -->
+        <module name="JavadocContentLocation" />
 
         <!-- Checks the Javadoc of a method or constructor. -->
-        <!-- <module name="JavadocMethod" /> -->
+        <module name="JavadocMethod">
+            <property name="accessModifiers" value="protected" />
+        </module>
 
         <!-- Checks if the javadoc has leading asterisks on each line. -->
-        <!-- <module name="JavadocMissingLeadingAsterisk" /> -->
+        <module name="JavadocMissingLeadingAsterisk" />
 
         <!-- Checks that there is at least one whitespace after the leading asterisk. -->
-        <!-- <module name="JavadocMissingWhitespaceAfterAsterisk" /> -->
+        <module name="JavadocMissingWhitespaceAfterAsterisk" />
 
         <!-- Checks the Javadoc paragraph. -->
         <!-- <module name="JavadocParagraph" /> -->
@@ -278,13 +285,17 @@
         <module name="JavadocStyle" />
 
         <!-- Checks the indentation of the continuation lines in block tags. -->
-        <!-- <module name="JavadocTagContinuationIndentation" /> -->
+        <module name="JavadocTagContinuationIndentation" />
 
         <!-- Checks the Javadoc comments for type definitions. -->
-        <!-- <module name="JavadocType" /> -->
+        <module name="JavadocType">
+            <property name="scope" value="protected" />
+        </module>
 
         <!-- Checks that a variable has a Javadoc comment. -->
-        <!-- <module name="JavadocVariable" /> -->
+        <!-- <module name="JavadocVariable">
+            <property name="scope" value="protected" />
+        </module> -->
 
         <!-- Determines complexity of methods, classes and files by counting the Non Commenting Source Statements (NCSS). -->
         <!-- <module name="JavaNCSS" /> -->
@@ -335,13 +346,17 @@
         <module name="MissingDeprecated" />
 
         <!-- Checks for missing Javadoc comments for a method or constructor. -->
-        <!-- <module name="MissingJavadocMethod" /> -->
+        <!-- <module name="MissingJavadocMethod">
+            <property name="scope" value="protected" />
+        </module> -->
 
         <!-- Checks for missing Javadoc comments in package-info.java files. -->
         <!-- <module name="MissingJavadocPackage" /> -->
 
         <!-- Checks for missing Javadoc comments for class, enum, interface, and annotation interface definitions. -->
-        <!-- <module name="MissingJavadocType" /> -->
+        <!-- <module name="MissingJavadocType">
+            <property name="scope" value="protected" />
+        </module> -->
 
         <!-- Verifies that the @Override annotation is present when the @inheritDoc javadoc tag is present. -->
         <module name="MissingOverride" />
@@ -496,14 +511,6 @@
             <property name="format" value="new FileOutputStream" />
             <property name="illegalPattern" value="true" />
         </module>
-        <module name="Regexp">
-            <property name="format" value="new BufferedInput" />
-            <property name="illegalPattern" value="true" />
-        </module>
-        <module name="Regexp">
-            <property name="format" value="new BufferedOutput" />
-            <property name="illegalPattern" value="true" />
-        </module>
 
         <!-- Checks that a specified pattern matches a single line in Java files. -->
         <!-- <module name="RegexpSinglelineJava" /> -->
@@ -531,10 +538,10 @@
         <module name="SimplifyBooleanReturn" />
 
         <!-- Checks that a Javadoc block can fit in a single line and doesn't contain block tags. -->
-        <!-- <module name="SingleLineJavadoc" /> -->
+        <module name="SingleLineJavadoc" />
 
         <!-- Checks that one blank line before the block tag if it is present in Javadoc. -->
-        <!-- <module name="RequireEmptyLineBeforeBlockTagGroup" /> -->
+        <module name="RequireEmptyLineBeforeBlockTagGroup" />
 
         <!-- Checks that non-whitespace characters are separated by no more than one whitespace. -->
         <module name="SingleSpaceSeparator" />
@@ -546,7 +553,7 @@
         <module name="StringLiteralEquality" />
 
         <!-- Checks that Javadoc summary sentence does not contain phrases that are not recommended to use. -->
-        <!-- <module name="SummaryJavadoc" /> -->
+        <module name="SummaryJavadoc" />
 
         <!-- Checks that an overriding clone() method invokes super.clone(). -->
         <module name="SuperClone" />

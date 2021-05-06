@@ -27,7 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-public class MeditationController implements Initializable {
+public final class MeditationController implements Initializable {
 
     @FXML
     private Button basics01Stop;
@@ -49,8 +49,8 @@ public class MeditationController implements Initializable {
         final var path = tracks.resolve("Take 15/01");
 
         final var media = new Media(path.toUri().toString());
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
+        this.mediaPlayer = new MediaPlayer(media);
+        this.mediaPlayer.setAutoPlay(true);
         this.basics01Pause.setDisable(false);
         this.basics01Stop.setDisable(false);
         this.basics01Start.setDisable(true);
@@ -58,33 +58,34 @@ public class MeditationController implements Initializable {
 
     @FXML
     private void pause() {
-        // TODO
+        // XXX
     }
 
     @FXML
     private void stop() {
-        mediaPlayer.dispose();
+        this.mediaPlayer.dispose();
         this.basics01Pause.setDisable(true);
         this.basics01Stop.setDisable(true);
         this.basics01Start.setDisable(false);
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        basics01Stop.setDisable(true);
-        basics01Pause.setDisable(true);
+    public void initialize(final URL location, final ResourceBundle resources) {
+        this.basics01Stop.setDisable(true);
+        this.basics01Pause.setDisable(true);
 
         // ############# basics (rest) ############################
         final var basicsPath = Path.of("src", "main", "resources", "com", "kiwimeaty", "apps", "meditation",
                 "test-tracks");
         try {
-            createAndFillTitledPanes(basics, basicsPath);
+            createAndFillTitledPanes(this.basics, basicsPath);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    private void createAndFillTitledPanes(Accordion sectionContainer, Path pathToSection) throws IOException {
+    private void createAndFillTitledPanes(final Accordion sectionContainer, final Path pathToSection)
+            throws IOException {
 
         final List<Path> sectionDirectories;
         ObservableList<Media> tracks;
@@ -113,51 +114,50 @@ public class MeditationController implements Initializable {
 
             sectionContainer.getPanes().add(titledPane1);
         }
-
     }
 
     private static ObservableList<Media> createTracks(final Path tracksPath) throws IOException {
         try (var files = Files.walk(tracksPath).filter(Files::isRegularFile)) {
-            ObservableList<Media> tracks = FXCollections.observableArrayList();
+            final ObservableList<Media> tracks = FXCollections.observableArrayList();
             files.map(Path::toUri).map(URI::toString).map(Media::new).forEach(tracks::add);
             return tracks;
         }
     }
 
-    private class TrackListItem extends ListCell<Media> {
-        HBox hbox = new HBox();
-        Media track;
-        Button trackBtn = new Button("No metadata found... yet?");
+    private final class TrackListItem extends ListCell<Media> {
+        private HBox hbox = new HBox();
+        private Media track;
+        private Button trackBtn = new Button("No metadata found... yet?");
 
-        public TrackListItem() {
-            hbox.getChildren().addAll(trackBtn); // TODO replace hbox?
-            trackBtn.setOnAction(clickEvent -> startTrack());
+        TrackListItem() {
+            this.hbox.getChildren().addAll(this.trackBtn);
+            this.trackBtn.setOnAction(clickEvent -> startTrack());
         }
 
         private void startTrack() {
-            if (mediaPlayer != null)
-                mediaPlayer.dispose(); // stop other track
-            mediaPlayer = new MediaPlayer(track);
-            mediaPlayer.setAutoPlay(true);
+            if (MeditationController.this.mediaPlayer != null)
+                MeditationController.this.mediaPlayer.dispose(); // stop other track
+            MeditationController.this.mediaPlayer = new MediaPlayer(this.track);
+            MeditationController.this.mediaPlayer.setAutoPlay(true);
         }
 
         @Override
-        protected void updateItem(Media item, boolean empty) {
+        protected void updateItem(final Media item, final boolean empty) {
             super.updateItem(item, empty);
             setText(null);
             if (empty) {
-                track = null;
+                this.track = null;
                 setGraphic(null);
             } else {
-                track = item;
-                final var meta = track.getMetadata();
+                this.track = item;
+                final var meta = this.track.getMetadata();
                 if (meta.isEmpty())
                     meta.addListener((MapChangeListener.Change<? extends String, ? extends Object> chg) -> {
-                        trackBtn.setText(String.format("%02d %s", meta.get("track number"), meta.get("title")));
+                        this.trackBtn.setText(String.format("%02d %s", meta.get("track number"), meta.get("title")));
                     });
                 else // no change will occur anymore >> write it now
-                    trackBtn.setText(String.format("%02d %s", meta.get("track number"), meta.get("title")));
-                setGraphic(hbox);
+                    this.trackBtn.setText(String.format("%02d %s", meta.get("track number"), meta.get("title")));
+                setGraphic(this.hbox);
             }
         }
     }

@@ -17,7 +17,7 @@ public class Main extends Application {
     public static ResourceBundle bundle = ResourceBundle.getBundle("com.kiwimeaty.apps.meditation.messages",
             Locale.ENGLISH);
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         launch(args);
     }
 
