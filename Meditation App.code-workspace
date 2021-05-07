@@ -17,8 +17,8 @@
     },
     "settings": {
         // TODO not really working...
-        // "java.checkstyle.configuration": "${workspaceFolder}/checkstyle-rules.xml", 
-        // "java.checkstyle.version": "8.42",
+        "java.checkstyle.configuration": "${workspaceFolder}/checkstyle-rules.xml",
+        "java.checkstyle.version": "8.42",
         "maven.terminal.favorites": [
             {
                 "alias": "Build & Test",

@@ -34,7 +34,7 @@ public final class PlayerController implements Initializable {
     public PlayerController(final Media track) {
         this.mediaPlayer = new MediaPlayer(track);
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("player.fxml"));
+        final var loader = new FXMLLoader(getClass().getResource("player.fxml"));
         loader.setController(this);
 
         this.stage = new Stage();
@@ -59,7 +59,7 @@ public final class PlayerController implements Initializable {
         this.mediaPlayer.setVolume(0.3); // start with 30%
         this.volumeSlider.setValue(this.mediaPlayer.getVolume() * 100); // initValue: 0...1 >> 0...100
         this.volumeSlider.valueProperty()
-                .addListener((observable) -> this.mediaPlayer.setVolume(this.volumeSlider.getValue() / 100));
+                .addListener(observable -> this.mediaPlayer.setVolume(this.volumeSlider.getValue() / 100));
     }
 
     public void showStage() {
@@ -67,7 +67,7 @@ public final class PlayerController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.stop.setDisable(true);
         this.pause.setDisable(true);
     }
