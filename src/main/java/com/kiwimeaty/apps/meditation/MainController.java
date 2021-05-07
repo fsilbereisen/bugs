@@ -26,7 +26,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 
-public final class MeditationController implements Initializable {
+public final class MainController implements Initializable {
+    @FXML
+    private ListView<Media> basics02list;
     @FXML
     private Accordion basics;
     @FXML

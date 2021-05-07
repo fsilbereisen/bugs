@@ -23,7 +23,7 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
-        final var url = getClass().getResource("meditation.fxml");
+        final var url = getClass().getResource("main.fxml");
         final var loader = new FXMLLoader(url, bundle);
         final var root = loader.<Parent>load();
         final var scene = new Scene(root);
