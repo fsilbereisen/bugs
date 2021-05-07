@@ -8,31 +8,31 @@
 <?import javafx.scene.layout.BorderPane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="349.0" prefWidth="502.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiwimeaty.apps.meditation.MainController">
-   <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-         <tabs>
-            <Tab text="Basics">
-               <content>
-                  <AnchorPane>
-                     <children>
-                        <Accordion fx:id="basics" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-            <Tab text="Discovery">
-               <content>
-                  <AnchorPane>
-                     <children>
-                        <Accordion fx:id="discovery" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-         </tabs>
-      </TabPane>
-   </center>
-   <top>
-      <TextField alignment="CENTER" text="Meditation" BorderPane.alignment="CENTER" />
-   </top>
+    <center>
+        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab text="Basics">
+                    <content>
+                        <AnchorPane>
+                            <children>
+                                <Accordion fx:id="basics" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Discovery">
+                    <content>
+                        <AnchorPane>
+                            <children>
+                                <Accordion fx:id="discovery" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    <top>
+        <TextField alignment="CENTER" text="Meditation" BorderPane.alignment="CENTER" />
+    </top>
 </BorderPane>

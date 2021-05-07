@@ -16,19 +16,17 @@
         ],
     },
     "settings": {
-        // TODO not really working...
         "java.checkstyle.configuration": "${workspaceFolder}/checkstyle-rules.xml",
         "java.checkstyle.version": "8.42",
         "maven.terminal.favorites": [
             {
-                "alias": "Build & Test",
-                "command": "clean verify"
+                "alias": "Build & Test (update snapshots)",
+                "command": "-U clean test"
             },
             {
-                "alias": "Build & Test (update snapshots)",
+                "alias": "Build & Verify (update snapshots)",
                 "command": "-U clean verify"
             }
-        ],
-        "java.configuration.updateBuildConfiguration": "interactive"
+        ]
     },
 }
