@@ -38,11 +38,11 @@ public final class MainController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
 
         // ############# basics (rest) ############################
-        final var basicsPath = Path.of("src", "main", "resources", "com", "kiwimeaty", "apps", "meditation",
+        final var testPath = Path.of("src", "main", "resources", "com", "kiwimeaty", "apps", "meditation",
                 "test-tracks");
         try {
-            createAndFillTitledPanes(this.basics, basicsPath);
-            createAndFillTitledPanes(this.discovery, basicsPath);
+            createAndFillTitledPanes(this.basics, testPath.resolve("Basics"));
+            createAndFillTitledPanes(this.discovery, testPath.resolve("Discovery"));
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
