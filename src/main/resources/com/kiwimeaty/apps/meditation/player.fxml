@@ -15,11 +15,11 @@
         </Slider>
         <ButtonBar prefHeight="40.0" prefWidth="402.0">
             <buttons>
-                <Button fx:id="play" mnemonicParsing="false" onAction="#play" prefWidth="515.0" text="Play" />
-                <Button fx:id="pause" mnemonicParsing="false" onAction="#pause" text="Pause" />
-                <Button fx:id="stop" mnemonicParsing="false" onAction="#stop" prefHeight="25.0" text="Stop" textAlignment="JUSTIFY" />
-                <Button fx:id="minusTenSecs" mnemonicParsing="false" onAction="#minus10" text="-10s" textAlignment="JUSTIFY" />
-                <Button fx:id="plusTen" mnemonicParsing="false" onAction="#plus10" text="+10s" textAlignment="JUSTIFY" />
+                <Button fx:id="playBtn" mnemonicParsing="false" onAction="#play" prefWidth="515.0" text="Play" />
+                <Button fx:id="pauseBtn" mnemonicParsing="false" onAction="#pause" text="Pause" />
+                <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#stop" prefHeight="25.0" text="Stop" textAlignment="JUSTIFY" />
+                <Button fx:id="minus10Btn" mnemonicParsing="false" onAction="#minus10" text="-10s" textAlignment="JUSTIFY" />
+                <Button fx:id="plus10Btn" mnemonicParsing="false" onAction="#plus10" text="+10s" textAlignment="JUSTIFY" />
                 <Slider fx:id="volumeSlider" />
             </buttons>
             <padding>

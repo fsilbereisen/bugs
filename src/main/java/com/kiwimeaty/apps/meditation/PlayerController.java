@@ -5,6 +5,8 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,19 +15,25 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public final class PlayerController implements Initializable {
     private MediaPlayer mediaPlayer;
+    private ReadOnlyObjectProperty<Status> status;
     private Stage stage;
 
     @FXML
-    private Button stop;
+    private Button stopBtn;
     @FXML
-    private Button play;
+    private Button playBtn;
     @FXML
-    private Button pause;
+    private Button pauseBtn;
+    @FXML
+    private Button minus10Btn;
+    @FXML
+    private Button plus10Btn;
     @FXML
     private Slider progressBar;
     @FXML
@@ -33,6 +41,7 @@ public final class PlayerController implements Initializable {
 
     public PlayerController(final Media track) {
         this.mediaPlayer = new MediaPlayer(track);
+        this.status = this.mediaPlayer.statusProperty();
 
         final var loader = new FXMLLoader(getClass().getResource("player.fxml"));
         loader.setController(this);
@@ -66,37 +75,46 @@ public final class PlayerController implements Initializable {
         this.stage.show();
     }
 
+    /**
+     * Set when buttons are disabled.
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        this.stop.setDisable(true);
-        this.pause.setDisable(true);
+        final var playDisabledBinding = this.status.isEqualTo(Status.PLAYING);
+        final var pauseDisabledBinding = Bindings.createBooleanBinding(() -> {
+            final var status = this.status.getValue();
+            return status != null ? switch (status) {
+                case PAUSED, STOPPED, READY -> true;
+                default -> false;
+            } : true;// disable button
+        }, this.status); // this.status will be observed
+
+        final var stopDisabledBinding = this.status.isEqualTo(Status.STOPPED).or(this.status.isEqualTo(Status.READY));
+        final var plusAndMinus10DisabledBinding = this.status.isEqualTo(Status.STOPPED)
+                .or(this.status.isEqualTo(Status.READY));
+        final var progressBarDisabledBinding = this.status.isEqualTo(Status.STOPPED);
+
+        this.playBtn.disableProperty().bind(playDisabledBinding);
+        this.pauseBtn.disableProperty().bind(pauseDisabledBinding);
+        this.stopBtn.disableProperty().bind(stopDisabledBinding);
+        this.minus10Btn.disableProperty().bind(plusAndMinus10DisabledBinding);
+        this.plus10Btn.disableProperty().bind(plusAndMinus10DisabledBinding);
+        this.progressBar.disableProperty().bind(progressBarDisabledBinding);
     }
 
     @FXML
     private void play() {
         this.mediaPlayer.play();
-
-        this.pause.setDisable(false);
-        this.stop.setDisable(false);
-        this.play.setDisable(true);
     }
 
     @FXML
     private void pause() {
         this.mediaPlayer.pause();
-
-        this.pause.setDisable(true);
-        this.play.setDisable(false);
-        this.stop.setDisable(false);
     }
 
     @FXML
     private void stop() {
         this.mediaPlayer.stop();
-
-        this.pause.setDisable(true);
-        this.stop.setDisable(true);
-        this.play.setDisable(false);
     }
 
     @FXML
