@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -51,7 +50,6 @@ public final class MainController implements Initializable {
     private void createAndFillTitledPanes(final Accordion seriesContainer, final Path pathToSeries) throws IOException {
 
         final List<Path> parts;
-        ObservableList<Media> tracks;
 
         try (var partsStrm = Files.walk(pathToSeries).filter(Files::isDirectory).filter(not(pathToSeries::equals))) {
             parts = partsStrm.collect(Collectors.toUnmodifiableList());
@@ -60,10 +58,12 @@ public final class MainController implements Initializable {
         for (Path part : parts) {
             final var partName = part.getFileName().toString();
 
-            final var listView = new ListView<Media>();
-            listView.setCellFactory(listView1 -> new TrackListItem());
-            tracks = createTracks(part);
-            listView.setItems(tracks);
+            final var listView = new ListView<Session>();
+            listView.setCellFactory(listView1 -> new SessionListItem());
+            final var sessions = createSessions(part, partName);
+
+            listView.setItems(sessions);
+            // eg: [Basics:Take10]
             listView.setId(String.format("[%s:%s]", pathToSeries.getFileName(), partName));
 
             final var anchorPane = new AnchorPane(listView);
@@ -79,45 +79,44 @@ public final class MainController implements Initializable {
         }
     }
 
-    private static ObservableList<Media> createTracks(final Path tracksPath) throws IOException {
+    private static ObservableList<Session> createSessions(final Path tracksPath, final String partName)
+            throws IOException {
         try (var files = Files.walk(tracksPath).filter(Files::isRegularFile)) {
             final ObservableList<Media> tracks = FXCollections.observableArrayList();
             files.map(Path::toUri).map(URI::toString).map(Media::new).forEach(tracks::add);
-            return tracks;
+
+            ObservableList<Session> sessions = FXCollections.observableArrayList();
+            for (int i = 0; i < tracks.size(); i++)
+                sessions.add(new Session(partName, i + 1, tracks.get(i)));
+            return sessions;
         }
     }
 
-    private final class TrackListItem extends ListCell<Media> {
+    private final class SessionListItem extends ListCell<Session> {
         private HBox hbox = new HBox();
-        private Media track;
+        private Session session;
         private Button trackBtn = new Button("No metadata found... yet?");
 
-        TrackListItem() {
+        SessionListItem() {
             this.hbox.getChildren().addAll(this.trackBtn);
-            this.trackBtn.setOnAction(clickEvent -> startTrack());
+            this.trackBtn.setOnAction(clickEvent -> showPlayer());
         }
 
-        private void startTrack() {
-            final var player = new PlayerController(this.track);
+        private void showPlayer() {
+            final var player = new PlayerController(this.session.track());
             player.showStage();
         }
 
         @Override
-        protected void updateItem(final Media track, final boolean empty) {
-            super.updateItem(track, empty);
+        protected void updateItem(final Session session, final boolean empty) {
+            super.updateItem(session, empty);
             setText(null);
             if (empty) {
-                this.track = null;
+                this.session = null;
                 setGraphic(null);
             } else {
-                this.track = track;
-                final var meta = this.track.getMetadata();
-                if (meta.isEmpty())
-                    meta.addListener((MapChangeListener.Change<? extends String, ? extends Object> chg) -> {
-                        this.trackBtn.setText(String.format("%02d %s", meta.get("track number"), meta.get("title")));
-                    });
-                else // no change will occur anymore >> write it now
-                    this.trackBtn.setText(String.format("%02d %s", meta.get("track number"), meta.get("title")));
+                this.session = session;
+                this.trackBtn.setText(String.format("%02d", Integer.valueOf(this.session.day())));
                 setGraphic(this.hbox);
             }
         }
