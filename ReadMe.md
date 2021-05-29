@@ -2,13 +2,13 @@
 
 ## Structure
 
-1. Basics (= **section1**)
-   - Take 10 (= **subSection1**)
-     - **track1**
-     - track2
+1. Basics (= **series1**)
+   - Take 10 (= **part1**)
+     - **day1** (including track1)
+     - day2
      - ...
    - Take 15
-     - track1
+     - day1
      - ...
    - Take 20
      - ...

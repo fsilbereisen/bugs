@@ -48,35 +48,34 @@ public final class MainController implements Initializable {
         }
     }
 
-    private void createAndFillTitledPanes(final Accordion sectionContainer, final Path pathToSection)
-            throws IOException {
+    private void createAndFillTitledPanes(final Accordion seriesContainer, final Path pathToSeries) throws IOException {
 
-        final List<Path> sectionDirectories;
+        final List<Path> parts;
         ObservableList<Media> tracks;
 
-        try (var dirs = Files.walk(pathToSection).filter(Files::isDirectory).filter(not(pathToSection::equals))) {
-            sectionDirectories = dirs.collect(Collectors.toUnmodifiableList());
+        try (var partsStrm = Files.walk(pathToSeries).filter(Files::isDirectory).filter(not(pathToSeries::equals))) {
+            parts = partsStrm.collect(Collectors.toUnmodifiableList());
         }
 
-        for (Path directory : sectionDirectories) {
-            final var subSectionName = directory.getFileName().toString();
+        for (Path part : parts) {
+            final var partName = part.getFileName().toString();
 
-            final var listView1 = new ListView<Media>();
-            listView1.setCellFactory(listView -> new TrackListItem());
-            tracks = createTracks(directory);
-            listView1.setItems(tracks);
-            listView1.setId(String.format("[%s:%s]", pathToSection.getFileName(), subSectionName));
+            final var listView = new ListView<Media>();
+            listView.setCellFactory(listView1 -> new TrackListItem());
+            tracks = createTracks(part);
+            listView.setItems(tracks);
+            listView.setId(String.format("[%s:%s]", pathToSeries.getFileName(), partName));
 
-            final var anchorPane1 = new AnchorPane(listView1);
+            final var anchorPane = new AnchorPane(listView);
 
-            final var titledPane1 = new TitledPane(subSectionName, anchorPane1);
+            final var titledPane = new TitledPane(partName, anchorPane);
             // extend listViews' size to anchorPane (which means basically titledPane...)
-            AnchorPane.setTopAnchor(listView1, 0.0);
-            AnchorPane.setRightAnchor(listView1, 0.0);
-            AnchorPane.setBottomAnchor(listView1, 0.0);
-            AnchorPane.setLeftAnchor(listView1, 0.0);
+            AnchorPane.setTopAnchor(listView, 0.0);
+            AnchorPane.setRightAnchor(listView, 0.0);
+            AnchorPane.setBottomAnchor(listView, 0.0);
+            AnchorPane.setLeftAnchor(listView, 0.0);
 
-            sectionContainer.getPanes().add(titledPane1);
+            seriesContainer.getPanes().add(titledPane);
         }
     }
 
@@ -104,14 +103,14 @@ public final class MainController implements Initializable {
         }
 
         @Override
-        protected void updateItem(final Media item, final boolean empty) {
-            super.updateItem(item, empty);
+        protected void updateItem(final Media track, final boolean empty) {
+            super.updateItem(track, empty);
             setText(null);
             if (empty) {
                 this.track = null;
                 setGraphic(null);
             } else {
-                this.track = item;
+                this.track = track;
                 final var meta = this.track.getMetadata();
                 if (meta.isEmpty())
                     meta.addListener((MapChangeListener.Change<? extends String, ? extends Object> chg) -> {
