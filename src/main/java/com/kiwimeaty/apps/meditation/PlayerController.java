@@ -13,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.stage.Stage;
@@ -39,7 +38,8 @@ public final class PlayerController implements Initializable {
     @FXML
     private Slider volumeSlider;
 
-    public PlayerController(final Media track) {
+    public PlayerController(final Session session) {
+        final var track = session.track();
         this.mediaPlayer = new MediaPlayer(track);
         this.status = this.mediaPlayer.statusProperty();
 
@@ -47,7 +47,7 @@ public final class PlayerController implements Initializable {
         loader.setController(this);
 
         this.stage = new Stage();
-        this.stage.setTitle(track.getMetadata().get("album").toString());
+        this.stage.setTitle(String.format("%s: Day %02d", session.part(), Integer.valueOf(session.day())));
         try {
             this.stage.setScene(new Scene(loader.load()));
         } catch (IOException ex) {

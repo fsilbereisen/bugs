@@ -95,7 +95,7 @@ public final class MainController implements Initializable {
     private final class SessionListItem extends ListCell<Session> {
         private HBox hbox = new HBox();
         private Session session;
-        private Button trackBtn = new Button("No metadata found... yet?");
+        private Button trackBtn = new Button();
 
         SessionListItem() {
             this.hbox.getChildren().addAll(this.trackBtn);
@@ -103,7 +103,7 @@ public final class MainController implements Initializable {
         }
 
         private void showPlayer() {
-            final var player = new PlayerController(this.session.track());
+            final var player = new PlayerController(this.session);
             player.showStage();
         }
 
