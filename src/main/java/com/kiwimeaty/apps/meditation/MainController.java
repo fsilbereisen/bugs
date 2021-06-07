@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -86,8 +87,9 @@ public final class MainController implements Initializable {
             files.map(Path::toUri).map(URI::toString).map(Media::new).forEach(tracks::add);
 
             ObservableList<Session> sessions = FXCollections.observableArrayList();
-            for (int i = 0; i < tracks.size(); i++)
-                sessions.add(new Session(partName, i + 1, tracks.get(i)));
+            sessions.add(Session.create(partName, 1, tracks.get(0), Session.State.OPEN_CURRENT));
+            for (int i = 1; i < tracks.size(); i++)
+                sessions.add(Session.create(partName, i + 1, tracks.get(i), Session.State.CLOSED));
             return sessions;
         }
     }
@@ -117,6 +119,15 @@ public final class MainController implements Initializable {
             } else {
                 this.session = session;
                 this.trackBtn.setText(String.format("%02d", Integer.valueOf(this.session.day())));
+                // bind button
+                final var buttonDisabledBinding = Bindings.createBooleanBinding(() -> {
+                    return switch (this.session.status().get()) {
+                        case OPEN_CURRENT, OPEN_NEXT -> false;
+                        default -> true;
+                    };
+                }, this.session.status()); // Session.Status will be observed
+                this.trackBtn.disableProperty().bind(buttonDisabledBinding);
+
                 setGraphic(this.hbox);
             }
         }
