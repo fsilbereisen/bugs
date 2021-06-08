@@ -16,6 +16,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 public final class PlayerController implements Initializable {
@@ -53,7 +54,15 @@ public final class PlayerController implements Initializable {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        this.stage.setOnCloseRequest(event -> this.mediaPlayer.dispose());
+        this.stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            this.mediaPlayer.dispose();
+            // update Session.State
+            final var currentTime = this.mediaPlayer.currentTimeProperty().getValue();
+            final var trackDuration = track.getDuration();
+            final var threshold = trackDuration.subtract(trackDuration.divide(10));
+            if (currentTime.greaterThan(threshold))
+                session.state().set(Session.State.OPEN_NEXT);
+        });
 
         // configure progressBar
         this.mediaPlayer.setOnReady(() -> this.progressBar.setMax(track.getDuration().toSeconds()));
@@ -73,6 +82,10 @@ public final class PlayerController implements Initializable {
 
     public void showStage() {
         this.stage.show();
+    }
+
+    public Stage getStage() {
+        return this.stage;
     }
 
     /**

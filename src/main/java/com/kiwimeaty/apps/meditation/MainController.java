@@ -8,7 +8,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -28,11 +30,11 @@ import javafx.scene.media.Media;
 
 public final class MainController implements Initializable {
     @FXML
-    private ListView<Media> basics02list;
-    @FXML
     private Accordion basics;
     @FXML
     private Accordion discovery;
+
+    private Map<String, List<Session>> sessionsByPart = new HashMap<>();
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
@@ -62,6 +64,7 @@ public final class MainController implements Initializable {
             final var listView = new ListView<Session>();
             listView.setCellFactory(listView1 -> new SessionListItem());
             final var sessions = createSessions(part, partName);
+            this.sessionsByPart.put(partName, sessions);
 
             listView.setItems(sessions);
             // eg: [Basics:Take10]
@@ -107,6 +110,17 @@ public final class MainController implements Initializable {
         private void showPlayer() {
             final var player = new PlayerController(this.session);
             player.showStage();
+            // open next session
+            player.getStage().setOnCloseRequest(event -> {
+                if (this.session.state().get() == Session.State.OPEN_NEXT) {
+                    final var sessions = MainController.this.sessionsByPart.get(this.session.part());
+                    final var sessionIndex = sessions.indexOf(this.session);
+                    if (sessionIndex < MainController.this.sessionsByPart.size()) {
+                        final var nextSession = sessions.get(sessionIndex + 1);
+                        nextSession.state().set(Session.State.OPEN_CURRENT);
+                    }
+                }
+            });
         }
 
         @Override
@@ -121,11 +135,11 @@ public final class MainController implements Initializable {
                 this.trackBtn.setText(String.format("%02d", Integer.valueOf(this.session.day())));
                 // bind button
                 final var buttonDisabledBinding = Bindings.createBooleanBinding(() -> {
-                    return switch (this.session.status().get()) {
+                    return switch (this.session.state().get()) {
                         case OPEN_CURRENT, OPEN_NEXT -> false;
                         default -> true;
                     };
-                }, this.session.status()); // Session.Status will be observed
+                }, this.session.state()); // Session.State will be observed
                 this.trackBtn.disableProperty().bind(buttonDisabledBinding);
 
                 setGraphic(this.hbox);

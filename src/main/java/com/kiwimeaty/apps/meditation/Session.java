@@ -4,11 +4,11 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.media.Media;
 
-public final record Session(String part, int day, Media track, ObjectProperty<Session.State> status) {
+public final record Session(String part, int day, Media track, ObjectProperty<Session.State> state) {
 
-    public static Session create(String part, int day, Media track, State status) {
-        final var statusProp = new SimpleObjectProperty<Session.State>(status);
-        return new Session(part, day, track, statusProp);
+    public static Session create(String part, int day, Media track, State state) {
+        final var stateProp = new SimpleObjectProperty<Session.State>(state);
+        return new Session(part, day, track, stateProp);
     }
 
     public enum State {
