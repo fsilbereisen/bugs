@@ -1,38 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="349.0" prefWidth="502.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiwimeaty.apps.meditation.MainController">
+<BorderPane minHeight="450.0" minWidth="300.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiwimeaty.apps.meditation.MainController">
     <center>
-        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
                 <Tab text="Basics">
                     <content>
-                        <AnchorPane>
-                            <children>
-                                <Accordion fx:id="basics" />
-                            </children>
-                        </AnchorPane>
+                        <Accordion fx:id="basics" />
                     </content>
                 </Tab>
                 <Tab text="Discovery">
                     <content>
-                        <AnchorPane>
-                            <children>
-                                <Accordion fx:id="discovery" />
-                            </children>
-                        </AnchorPane>
+                        <Accordion fx:id="discovery" />
                     </content>
                 </Tab>
             </tabs>
         </TabPane>
     </center>
-    <top>
-        <TextField alignment="CENTER" text="Meditation" BorderPane.alignment="CENTER" />
-    </top>
 </BorderPane>

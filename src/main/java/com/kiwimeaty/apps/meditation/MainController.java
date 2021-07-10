@@ -24,7 +24,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 
@@ -70,16 +69,7 @@ public final class MainController implements Initializable {
             // eg: [Basics:Take10]
             listView.setId(String.format("[%s:%s]", pathToSeries.getFileName(), partName));
 
-            final var anchorPane = new AnchorPane(listView);
-
-            final var titledPane = new TitledPane(partName, anchorPane);
-            // extend listViews' size to anchorPane (which means basically titledPane...)
-            AnchorPane.setTopAnchor(listView, 0.0);
-            AnchorPane.setRightAnchor(listView, 0.0);
-            AnchorPane.setBottomAnchor(listView, 0.0);
-            AnchorPane.setLeftAnchor(listView, 0.0);
-
-            seriesContainer.getPanes().add(titledPane);
+            seriesContainer.getPanes().add(new TitledPane(partName, listView));
         }
     }
 
