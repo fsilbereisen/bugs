@@ -12,6 +12,11 @@ public final record Session(String part, int day, Media track, ObjectProperty<Se
     }
 
     public enum State {
-        CLOSED, OPEN_CURRENT, OPEN_NEXT
+        /** This session is still locked. */
+        LOCKED,
+        /** This session is unlocked. */
+        UNLOCKED,
+        /** This is the latest unlocked session. */
+        LATEST_UNLOCKED
     }
 }

@@ -61,7 +61,7 @@ public final class PlayerController implements Initializable {
             final var trackDuration = track.getDuration();
             final var threshold = trackDuration.subtract(trackDuration.divide(10));
             if (currentTime.greaterThan(threshold))
-                session.state().set(Session.State.OPEN_NEXT);
+                session.state().set(Session.State.UNLOCKED);
         });
 
         // configure progressBar
