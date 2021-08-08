@@ -1,4 +1,4 @@
-package com.kiwimeaty.apps.meditation;
+package com.kiwimeaty.apps.meditation.util;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

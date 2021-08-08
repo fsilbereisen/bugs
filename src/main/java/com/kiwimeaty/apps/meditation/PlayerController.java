@@ -5,6 +5,8 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.kiwimeaty.apps.meditation.util.Session;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;

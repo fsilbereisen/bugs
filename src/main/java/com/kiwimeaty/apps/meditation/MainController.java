@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import com.kiwimeaty.apps.meditation.Session.State;
+import com.kiwimeaty.apps.meditation.util.Session;
+import com.kiwimeaty.apps.meditation.util.Session.State;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
