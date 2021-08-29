@@ -10,4 +10,5 @@ module com.kiwimeaty.apps.meditation {
     opens com.kiwimeaty.apps.meditation to javafx.fxml;
 
     exports com.kiwimeaty.apps.meditation;
+    exports com.kiwimeaty.apps.meditation.util;
 }

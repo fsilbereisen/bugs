@@ -6,8 +6,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.kiwimeaty.apps.meditation.util.Session;
+import com.kiwimeaty.apps.meditation.util.UnlockList;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,7 +43,7 @@ public final class PlayerController implements Initializable {
     @FXML
     private Slider volumeSlider;
 
-    public PlayerController(final Session session) {
+    public PlayerController(final Session session, final ObjectProperty<UnlockList.ElementState> sessionState) {
         final var track = session.track();
         this.mediaPlayer = new MediaPlayer(track);
         this.status = this.mediaPlayer.statusProperty();
@@ -56,15 +58,6 @@ public final class PlayerController implements Initializable {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        this.stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
-            this.mediaPlayer.dispose();
-            // update Session.State
-            final var currentTime = this.mediaPlayer.currentTimeProperty().getValue();
-            final var trackDuration = track.getDuration();
-            final var threshold = trackDuration.subtract(trackDuration.divide(10));
-            if (currentTime.greaterThan(threshold))
-                session.state().set(Session.State.UNLOCKED);
-        });
 
         // configure progressBar
         this.mediaPlayer.setOnReady(() -> this.progressBar.setMax(track.getDuration().toSeconds()));
@@ -74,6 +67,16 @@ public final class PlayerController implements Initializable {
                 .setOnMousePressed(event -> this.mediaPlayer.seek(Duration.seconds(this.progressBar.getValue())));
         this.progressBar
                 .setOnMouseDragged(event -> this.mediaPlayer.seek(Duration.seconds(this.progressBar.getValue())));
+
+        // update Session.State
+        this.stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            this.mediaPlayer.dispose();
+            final var currentTimeInSeconds = this.progressBar.getValue();
+            final var trackDuration = track.getDuration();
+            final var threshold = trackDuration.subtract(trackDuration.divide(10));
+            if (currentTimeInSeconds > threshold.toSeconds())
+                sessionState.set(UnlockList.ElementState.UNLOCKED);
+        });
 
         // configure volumeSlider
         this.mediaPlayer.setVolume(0.3); // start with 30%

@@ -15,7 +15,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import com.kiwimeaty.apps.meditation.util.Session;
-import com.kiwimeaty.apps.meditation.util.Session.State;
+import com.kiwimeaty.apps.meditation.util.UnlockList;
+import com.kiwimeaty.apps.meditation.util.UnlockList.ElementState;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -39,7 +40,7 @@ public final class MainController implements Initializable {
     @FXML
     private Accordion discovery;
 
-    private Map<String, List<Session>> sessionsByPart = new HashMap<>();
+    private Map<String, UnlockList<Session>> sessionsByPart = new HashMap<>();
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
@@ -84,31 +85,27 @@ public final class MainController implements Initializable {
         }
     }
 
-    private Button createNextSessionButton(List<Session> sessions) {
+    private Button createNextSessionButton(UnlockList<Session> sessions) {
         final var nextSessionButton = new Button("Next Session");
         nextSessionButton.setOnAction(event -> {
-            sessions.stream().map(s -> s.state().get()).forEach(System.out::println);
-            System.out.println();
-            final var latestUnlockedSession = sessions.stream()
-                    .filter(s -> s.state().get() == Session.State.LATEST_UNLOCKED).findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("no " + Session.State.LATEST_UNLOCKED + " exists"));
+            final var latestUnlockedSession = sessions.getLatestUnlockedElement();
             playSession(latestUnlockedSession);
         });
 
         // bind button
         final var buttonDisabledBinding = Bindings.createBooleanBinding(() -> {
-            return sessions.stream().allMatch(session -> session.state().get() == State.UNLOCKED);
-        }, sessions.stream().map(Session::state).toArray(ObjectProperty[]::new)); // Session.States will be observed
+            return sessions.getStates().stream().allMatch(state -> state.get() == ElementState.UNLOCKED);
+        }, sessions.getStates().toArray(ObjectProperty[]::new)); // ElementStates will be observed
         nextSessionButton.disableProperty().bind(buttonDisabledBinding);
         return nextSessionButton;
     }
 
     private ListView<Session> createListView(final Path part, final String partName, final Path pathToSeries)
             throws IOException {
-        final var listView = new ListView<Session>();
-        listView.setCellFactory(listView1 -> new SessionListItem());
         final var sessions = createSessions(part, partName);
-        this.sessionsByPart.put(partName, sessions);
+        this.sessionsByPart.put(partName, new UnlockList<>(sessions));
+        final var listView = new ListView<Session>();
+        listView.setCellFactory(listView1 -> new SessionListItem(this.sessionsByPart.get(partName)));
 
         listView.setItems(sessions);
         // eg: [Basics:Take10]
@@ -123,9 +120,9 @@ public final class MainController implements Initializable {
             files.map(Path::toUri).map(URI::toString).map(Media::new).forEach(tracks::add);
 
             ObservableList<Session> sessions = FXCollections.observableArrayList();
-            sessions.add(Session.create(partName, 1, tracks.get(0), Session.State.LATEST_UNLOCKED));
+            sessions.add(new Session(partName, 1, tracks.get(0)));
             for (int i = 1; i < tracks.size(); i++)
-                sessions.add(Session.create(partName, i + 1, tracks.get(i), Session.State.LOCKED));
+                sessions.add(new Session(partName, i + 1, tracks.get(i)));
             return sessions;
         }
     }
@@ -133,11 +130,14 @@ public final class MainController implements Initializable {
     private final class SessionListItem extends ListCell<Session> {
         private HBox hbox = new HBox();
         private Session session;
+        // for getting UnlockList.ElementState when updating session
+        private UnlockList<Session> listIncludingSession;
         private Button trackBtn = new Button();
 
-        SessionListItem() {
+        SessionListItem(final UnlockList<Session> listIncludingSession) {
             this.hbox.getChildren().addAll(this.trackBtn);
             this.trackBtn.setOnAction(clickEvent -> showPlayer());
+            this.listIncludingSession = listIncludingSession;
         }
 
         private void showPlayer() {
@@ -153,16 +153,18 @@ public final class MainController implements Initializable {
                 setGraphic(null);
             } else {
                 this.session = session;
+                final var sessionState = listIncludingSession.getState(this.session);
+
                 this.trackBtn.setText(String.format("%02d", Integer.valueOf(this.session.day())));
                 // bind button
                 final var buttonDisabledBinding = Bindings.createBooleanBinding(() -> {
-                    return switch (this.session.state().get()) {
+                    return switch (sessionState.get()) {
                         case LATEST_UNLOCKED, UNLOCKED -> false;
                         case LOCKED -> true;
                         default -> throw new IllegalArgumentException(
-                                "no such state implemented yet: " + this.session.state().get());
+                                "no such state implemented yet: " + sessionState.get());
                     };
-                }, this.session.state()); // Session.State will be observed
+                }, sessionState); // UnlockList.ElementState will be observed
                 this.trackBtn.disableProperty().bind(buttonDisabledBinding);
 
                 setGraphic(this.hbox);
@@ -171,19 +173,10 @@ public final class MainController implements Initializable {
     }
 
     private void playSession(Session session) {
-        final var player = new PlayerController(session);
+        final var sessions = this.sessionsByPart.get(session.part());
+        final var player = new PlayerController(session, sessions.getState(session));
         player.showStage();
         // unlock next session
-        player.getStage().setOnCloseRequest(event -> {
-            if (session.state().get() == Session.State.UNLOCKED) {
-                final var sessions = this.sessionsByPart.get(session.part());
-                final var sessionIndex = sessions.indexOf(session);
-                if (sessionIndex < sessions.size() - 1) {
-                    final var nextSession = sessions.get(sessionIndex + 1);
-                    if (nextSession.state().get() == State.LOCKED)
-                        nextSession.state().set(Session.State.LATEST_UNLOCKED);
-                }
-            }
-        });
+        player.getStage().setOnCloseRequest(event -> sessions.unlockNextElement(session));
     }
 }
