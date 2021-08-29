@@ -2,7 +2,6 @@ package com.kiwimeaty.apps.meditation.util;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,7 +16,7 @@ public final class UnlockList<E> {
     private final List<Item> list;
 
     public UnlockList(final List<E> elements) {
-        this.list = elements.stream().map(s -> new Item(s)).collect(Collectors.toUnmodifiableList());
+        this.list = elements.stream().map(Item::new).toList();
         this.list.get(0).state.set(ElementState.LATEST_UNLOCKED);
     }
 
@@ -48,21 +47,17 @@ public final class UnlockList<E> {
                 .orElseThrow(() -> new IllegalArgumentException("no " + ElementState.LATEST_UNLOCKED + " exists"));
     }
 
+    /**
+     * Returns the states of the elements in the list. The states are ordered.
+     * 
+     * @return the states of the elements in the right order
+     */
     public List<ObjectProperty<UnlockList.ElementState>> getStates() {
-        return this.list.stream().map(item -> item.state).collect(Collectors.toList());
+        return this.list.stream().map(item -> item.state).toList();
     }
 
     public ObjectProperty<UnlockList.ElementState> getState(final E element) {
         return getItem(element).state;
-    }
-
-    public boolean containsElement(final E element) {
-        try {
-            getItem(element);
-            return true;
-        } catch (NoSuchElementException ex) {
-            return false;
-        }
     }
 
     // #############################################################

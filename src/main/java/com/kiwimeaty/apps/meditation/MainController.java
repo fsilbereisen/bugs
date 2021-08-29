@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
@@ -70,7 +74,9 @@ public final class MainController implements Initializable {
 
             // this.sessionsByPart are available here, not before createListView()!
             final var sessions = this.sessionsByPart.get(partName);
-            final Button nextSessionButton = createNextSessionButton(sessions);
+
+            final var nextSessionButton = createNextSessionButton(sessions);
+            final var resetButton = createResetSessionButton(sessions);
 
             // build titledPane
             final var grid = new GridPane();
@@ -80,7 +86,7 @@ public final class MainController implements Initializable {
             grid.add(listView, 0, 0, 1, 3);
 
             grid.add(nextSessionButton, 1, 0);
-            grid.add(new Button("Reset"), 1, 1);
+            grid.add(resetButton, 1, 1);
             seriesContainer.getPanes().add(new TitledPane(partName, grid));
         }
     }
@@ -100,12 +106,37 @@ public final class MainController implements Initializable {
         return nextSessionButton;
     }
 
+    private Button createResetSessionButton(UnlockList<Session> sessions) {
+        final var resetButton = new Button("Reset");
+        resetButton.setOnAction(event -> showResetConfirmation(sessions));
+
+        // bind button
+        final var firstSessionState = sessions.getStates().get(0);
+        final var buttonDisabledBinding = Bindings.createBooleanBinding(() -> {
+            return firstSessionState.get() == ElementState.LATEST_UNLOCKED ? true : false;
+        }, firstSessionState); // ElementState of first session will be observed
+        resetButton.disableProperty().bind(buttonDisabledBinding);
+        return resetButton;
+    }
+
+    private void showResetConfirmation(final UnlockList<Session> sessions) {
+        final var alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Reset Part");
+        alert.setHeaderText("Are you sure you want to reset this part?");
+        alert.setContentText("You'll have to redo each session to unlock them again.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)
+            sessions.resetList();
+        alert.close();
+    }
+
     private ListView<Session> createListView(final Path part, final String partName, final Path pathToSeries)
             throws IOException {
         final var sessions = createSessions(part, partName);
         this.sessionsByPart.put(partName, new UnlockList<>(sessions));
         final var listView = new ListView<Session>();
-        listView.setCellFactory(listView1 -> new SessionListItem(this.sessionsByPart.get(partName)));
+        listView.setCellFactory(listView1 -> new SessionListItem());
 
         listView.setItems(sessions);
         // eg: [Basics:Take10]
@@ -130,14 +161,11 @@ public final class MainController implements Initializable {
     private final class SessionListItem extends ListCell<Session> {
         private HBox hbox = new HBox();
         private Session session;
-        // for getting UnlockList.ElementState when updating session
-        private UnlockList<Session> listIncludingSession;
         private Button trackBtn = new Button();
 
-        SessionListItem(final UnlockList<Session> listIncludingSession) {
+        private SessionListItem() {
             this.hbox.getChildren().addAll(this.trackBtn);
             this.trackBtn.setOnAction(clickEvent -> showPlayer());
-            this.listIncludingSession = listIncludingSession;
         }
 
         private void showPlayer() {
@@ -153,7 +181,8 @@ public final class MainController implements Initializable {
                 setGraphic(null);
             } else {
                 this.session = session;
-                final var sessionState = listIncludingSession.getState(this.session);
+                final var sessions = MainController.this.sessionsByPart.get(this.session.part());
+                final var sessionState = sessions.getState(this.session);
 
                 this.trackBtn.setText(String.format("%02d", Integer.valueOf(this.session.day())));
                 // bind button
