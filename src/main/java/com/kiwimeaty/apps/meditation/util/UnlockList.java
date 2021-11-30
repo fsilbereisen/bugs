@@ -10,6 +10,8 @@ import javafx.beans.property.SimpleObjectProperty;
  * An UnlockList will unlock its elements one by one by calling
  * {@link #unlockNextElement}. The first element is always unlocked, also after
  * resetting the list.
+ * 
+ * @param <E> the element for the unlockList
  */
 public final class UnlockList<E> {
 
@@ -50,7 +52,7 @@ public final class UnlockList<E> {
     /**
      * Returns the states of the elements in the list. The states are ordered.
      * 
-     * @return the states of the elements in the right order
+     * @return the states of the elements in the right order.
      */
     public List<ObjectProperty<UnlockList.ElementState>> getStates() {
         return this.list.stream().map(item -> item.state).toList();
@@ -61,7 +63,7 @@ public final class UnlockList<E> {
     }
 
     // #############################################################
-    private Item getItem(E currentElement) {
+    private Item getItem(final E currentElement) {
         return this.list.stream().filter(item -> item.elem.equals(currentElement)).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("no such element: " + currentElement));
     }
@@ -82,7 +84,7 @@ public final class UnlockList<E> {
         private final E elem;
         private final ObjectProperty<ElementState> state;
 
-        public Item(final E elem) {
+        Item(final E elem) {
             this.elem = elem;
             this.state = new SimpleObjectProperty<>(ElementState.LOCKED);
         }

@@ -91,7 +91,7 @@ public final class MainController implements Initializable {
         }
     }
 
-    private Button createNextSessionButton(UnlockList<Session> sessions) {
+    private Button createNextSessionButton(final UnlockList<Session> sessions) {
         final var nextSessionButton = new Button("Next Session");
         nextSessionButton.setOnAction(event -> {
             final var latestUnlockedSession = sessions.getLatestUnlockedElement();
@@ -106,7 +106,7 @@ public final class MainController implements Initializable {
         return nextSessionButton;
     }
 
-    private Button createResetSessionButton(UnlockList<Session> sessions) {
+    private Button createResetSessionButton(final UnlockList<Session> sessions) {
         final var resetButton = new Button("Reset");
         resetButton.setOnAction(event -> showResetConfirmation(sessions));
 
@@ -125,7 +125,7 @@ public final class MainController implements Initializable {
         alert.setHeaderText("Are you sure you want to reset this part?");
         alert.setContentText("You'll have to redo each session to unlock them again.");
 
-        Optional<ButtonType> result = alert.showAndWait();
+        final Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK)
             sessions.resetList();
         alert.close();
@@ -150,7 +150,7 @@ public final class MainController implements Initializable {
             final ObservableList<Media> tracks = FXCollections.observableArrayList();
             files.map(Path::toUri).map(URI::toString).map(Media::new).forEach(tracks::add);
 
-            ObservableList<Session> sessions = FXCollections.observableArrayList();
+            final ObservableList<Session> sessions = FXCollections.observableArrayList();
             sessions.add(new Session(partName, 1, tracks.get(0)));
             for (int i = 1; i < tracks.size(); i++)
                 sessions.add(new Session(partName, i + 1, tracks.get(i)));
@@ -201,7 +201,7 @@ public final class MainController implements Initializable {
         }
     }
 
-    private void playSession(Session session) {
+    private void playSession(final Session session) {
         final var sessions = this.sessionsByPart.get(session.part());
         final var player = new PlayerController(session, sessions.getState(session));
         player.showStage();

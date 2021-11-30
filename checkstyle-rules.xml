@@ -541,7 +541,7 @@
         <module name="SingleLineJavadoc" />
 
         <!-- Checks that one blank line before the block tag if it is present in Javadoc. -->
-        <module name="RequireEmptyLineBeforeBlockTagGroup" />
+        <!-- <module name="RequireEmptyLineBeforeBlockTagGroup" /> -->
 
         <!-- Checks that non-whitespace characters are separated by no more than one whitespace. -->
         <module name="SingleSpaceSeparator" />
