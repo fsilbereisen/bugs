@@ -9,5 +9,5 @@ import javafx.scene.media.Media;
  * @param day   the day of the part
  * @param track the file
  */
-public final record Session(String part, int day, Media track) {//
+public record Session(String part, int day, Media track) {//
 }

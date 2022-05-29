@@ -4,6 +4,7 @@
     <!-- exclude the 'target' directories -->
     <suppress files="[/\\]target[/\\]" checks=".*" />
 
-    <!-- exclude directories starting with '.' -->
-    <suppress files="[/\\]\..+" checks=".*" />
+    <!-- suppress certain checks for test code -->
+    <suppress files="[/\\]src[/\\]" checks="javadoc" />
+    <suppress files="[/\\]src[/\\]test[/\\]" checks="JavadocVariableCheck" />
 </suppressions>

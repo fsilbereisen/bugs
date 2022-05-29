@@ -7,7 +7,7 @@
     <name>My meditation app</name>
 
     <properties>
-        <javafx-version>17-ea+9</javafx-version>
+        <javafx-version>19-ea+7</javafx-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>16</maven.compiler.release>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
@@ -15,7 +15,7 @@
 
         <!-- versions of plugins -->
         <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
-        <maven-checkstyle.version>8.42</maven-checkstyle.version>
+        <maven-checkstyle.version>10.2</maven-checkstyle.version>
     </properties>
 
     <dependencies>
@@ -76,17 +76,19 @@
                 </dependencies>
                 <executions>
                     <execution>
+                        <?m2e ignore?>
                         <id>check-rules</id>
-                        <phase>verify</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <configLocation>checkstyle-rules.xml</configLocation>
-                    <excludes>**/module-info.java</excludes>
-                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <configLocation>checkstyle/checkstyle-rules.xml</configLocation>
+                    <violationSeverity>warning</violationSeverity>
+                    <excludes>**/module-info.java</excludes> <!-- See https://github.com/checkstyle/checkstyle/issues/8240 -->
+                    <suppressionsLocation>checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
                 </configuration>
             </plugin>
         </plugins>

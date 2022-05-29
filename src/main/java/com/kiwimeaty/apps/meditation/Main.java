@@ -14,7 +14,7 @@ public class Main extends Application {
     static { // run before any
         Locale.setDefault(Locale.CHINA);
     }
-    public static ResourceBundle bundle = ResourceBundle.getBundle("com.kiwimeaty.apps.meditation.messages",
+    private static ResourceBundle bundle = ResourceBundle.getBundle("com.kiwimeaty.apps.meditation.messages",
             Locale.ENGLISH);
 
     public static void main(final String[] args) {

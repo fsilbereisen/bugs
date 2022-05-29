@@ -54,9 +54,9 @@ public final class MainController implements Initializable {
 
         try (var seriesStrm = Files.walk(testPath, 1).filter(Files::isDirectory).filter(not(testPath::equals))) {
             final var series = seriesStrm.collect(Collectors.toUnmodifiableList());
-            for (Path serie : series)
+            for (final Path serie : series)
                 createAndFillTitledPanes(serie);
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
@@ -70,7 +70,7 @@ public final class MainController implements Initializable {
         }
 
         final var accordion = new Accordion();
-        for (Path part : parts) {
+        for (final Path part : parts) {
             final var partName = part.getFileName().toString();
             final var listView = createListView(part, partName, pathToSeries);
 
@@ -117,7 +117,7 @@ public final class MainController implements Initializable {
         // bind button
         final var firstSessionState = sessions.getStates().get(0);
         final var buttonDisabledBinding = Bindings.createBooleanBinding(() -> {
-            return firstSessionState.get() == ElementState.LATEST_UNLOCKED ? true : false;
+            return firstSessionState.get() == ElementState.LATEST_UNLOCKED;
         }, firstSessionState); // ElementState of first session will be observed
         resetButton.disableProperty().bind(buttonDisabledBinding);
         return resetButton;
@@ -177,14 +177,14 @@ public final class MainController implements Initializable {
         }
 
         @Override
-        protected void updateItem(final Session session, final boolean empty) {
-            super.updateItem(session, empty);
+        protected void updateItem(final Session session1, final boolean empty) {
+            super.updateItem(session1, empty);
             setText(null);
             if (empty) {
                 this.session = null;
                 setGraphic(null);
             } else {
-                this.session = session;
+                this.session = session1;
                 final var sessions = MainController.this.sessionsByPart.get(this.session.part());
                 final var sessionState = sessions.getState(this.session);
 

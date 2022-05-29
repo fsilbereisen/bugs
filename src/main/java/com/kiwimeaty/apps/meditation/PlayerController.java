@@ -55,7 +55,7 @@ public final class PlayerController implements Initializable {
         this.stage.setTitle(String.format("%s: Day %02d", session.part(), Integer.valueOf(session.day())));
         try {
             this.stage.setScene(new Scene(loader.load()));
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new UncheckedIOException(ex);
         }
 
@@ -100,8 +100,8 @@ public final class PlayerController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
         final var playDisabledBinding = this.status.isEqualTo(Status.PLAYING);
         final var pauseDisabledBinding = Bindings.createBooleanBinding(() -> {
-            final var status = this.status.getValue();
-            return status != null ? switch (status) {
+            final var status1 = this.status.getValue();
+            return status1 != null ? switch (status1) {
                 case PAUSED, STOPPED, READY -> true;
                 default -> false;
             } : true;// disable button
