@@ -476,11 +476,11 @@
         <module name="RedundantModifier" />
 
         <!-- Checks that a specified pattern exists, exists less than a set number of times, or does not exist in the file. -->
-        <module name="Regexp">
+        <!-- <module name="Regexp">
             <property name="format" value="TODO\s+(?!MPX-\d+).*" />
             <property name="illegalPattern" value="true" />
             <property name="message" value="TODOs must have a linked JIRA issue: 'TODO MPX-123 text'" />
-        </module>
+        </module> -->
         <!--
         <module name="Regexp">
             <property name="format" value="System\.out\.print" />

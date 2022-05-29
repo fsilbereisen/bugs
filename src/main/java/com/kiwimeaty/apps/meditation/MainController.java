@@ -33,6 +33,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -40,27 +42,26 @@ import javafx.scene.media.Media;
 
 public final class MainController implements Initializable {
     @FXML
-    private Accordion basics;
-    @FXML
-    private Accordion discovery;
+    private TabPane tabs;
 
     private Map<String, UnlockList<Session>> sessionsByPart = new HashMap<>();
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-
-        // ############# basics (rest) ############################
+        // TODO from test-tracks to real tracks
         final var testPath = Path.of("src", "main", "resources", "com", "kiwimeaty", "apps", "meditation",
                 "test-tracks");
-        try {
-            createAndFillTitledPanes(this.basics, testPath.resolve("Basics"));
-            createAndFillTitledPanes(this.discovery, testPath.resolve("Discovery"));
+
+        try (var seriesStrm = Files.walk(testPath, 1).filter(Files::isDirectory).filter(not(testPath::equals))) {
+            final var series = seriesStrm.collect(Collectors.toUnmodifiableList());
+            for (Path serie : series)
+                createAndFillTitledPanes(serie);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    private void createAndFillTitledPanes(final Accordion seriesContainer, final Path pathToSeries) throws IOException {
+    private void createAndFillTitledPanes(final Path pathToSeries) throws IOException {
 
         final List<Path> parts;
 
@@ -68,6 +69,7 @@ public final class MainController implements Initializable {
             parts = partsStrm.collect(Collectors.toUnmodifiableList());
         }
 
+        final var accordion = new Accordion();
         for (Path part : parts) {
             final var partName = part.getFileName().toString();
             final var listView = createListView(part, partName, pathToSeries);
@@ -87,8 +89,10 @@ public final class MainController implements Initializable {
 
             grid.add(nextSessionButton, 1, 0);
             grid.add(resetButton, 1, 1);
-            seriesContainer.getPanes().add(new TitledPane(partName, grid));
+
+            accordion.getPanes().add(new TitledPane(partName, grid));
         }
+        this.tabs.getTabs().add(new Tab(pathToSeries.getFileName().toString(), accordion));
     }
 
     private Button createNextSessionButton(final UnlockList<Session> sessions) {
