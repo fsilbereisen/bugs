@@ -4,10 +4,12 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 
@@ -27,6 +29,11 @@ public class Main extends Application {
         final var loader = new FXMLLoader(url, bundle);
         final var root = loader.<Parent>load();
         final var scene = new Scene(root);
+
+        final EventHandler<WindowEvent> close = event -> {
+
+        };
+        primaryStage.setOnCloseRequest(close);
 
         primaryStage.setTitle("My meditation app");
         primaryStage.setScene(scene);

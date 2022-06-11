@@ -9,15 +9,16 @@ import javafx.beans.property.SimpleObjectProperty;
 /**
  * An UnlockList will unlock its elements one by one by calling
  * {@link #unlockNextElement}. The first element is always unlocked, also after
- * resetting the list.
+ * resetting the list. This list is unmodifiable.
  * 
- * @param <E> the element for the unlockList
+ * @param <E> the element type for the unlockList
  */
 public final class UnlockList<E> {
 
     private final List<Item> list;
 
     public UnlockList(final List<E> elements) {
+        // unmodifiable list
         this.list = elements.stream().map(Item::new).toList();
         this.list.get(0).state.set(ElementState.LATEST_UNLOCKED);
     }
@@ -43,10 +44,22 @@ public final class UnlockList<E> {
         this.list.get(0).state.set(ElementState.LATEST_UNLOCKED);
     }
 
+    /**
+     * Returns the one element with the {@link ElementState.LATEST_UNLOCKED}. If all
+     * have been {@link ElementState.UNLOCKED UNLOCKED} then the last element in the
+     * list
+     * will be returned.
+     * 
+     * @return the latest unlocked element
+     */
     public E getLatestUnlockedElement() throws IllegalArgumentException {
         return this.list.stream().filter(item -> item.state.get() == ElementState.LATEST_UNLOCKED)//
                 .map(item -> item.elem).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("no " + ElementState.LATEST_UNLOCKED + " exists"));
+                .orElse(this.list.get(this.list.size() - 1).elem);
+    }
+
+    public int getIndexOfLatestUnlockedElement() {
+        return this.list.indexOf(getItem(getLatestUnlockedElement()));
     }
 
     /**

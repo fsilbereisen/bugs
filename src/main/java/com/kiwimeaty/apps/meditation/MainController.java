@@ -209,6 +209,16 @@ public final class MainController implements Initializable {
         final var player = new PlayerController(session, sessions.getState(session));
         player.showStage();
         // unlock next session
-        player.getStage().setOnCloseRequest(event -> sessions.unlockNextElement(session));
+        player.getStage().setOnCloseRequest(event -> {
+            final var hasUnlockedNextSession = sessions.unlockNextElement(session);
+            if (hasUnlockedNextSession)
+                storeProgressIntoFile(session.part(),
+                        sessions.getIndexOfLatestUnlockedElement());
+        });
+    }
+
+    private void storeProgressIntoFile(final String partName, final int indexOfLatestUnlockedElement) {
+        // TODO: store in json
+        System.out.println(partName + ": " + indexOfLatestUnlockedElement);
     }
 }
