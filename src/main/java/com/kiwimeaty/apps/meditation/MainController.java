@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import com.kiwimeaty.apps.meditation.util.Session;
 import com.kiwimeaty.apps.meditation.util.UnlockList;
@@ -49,11 +48,12 @@ public final class MainController implements Initializable {
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         // TODO from test-tracks to real tracks
-        final var testPath = Path.of("src", "main", "resources", "com", "kiwimeaty", "apps", "meditation",
-                "test-tracks");
+        final var testPath = Path.of("src", "main", "resources", "com", "kiwimeaty",
+                "apps", "meditation", "test-tracks");
+        // final var tracksPath = Path.of("tracks");
 
         try (var seriesStrm = Files.walk(testPath, 1).filter(Files::isDirectory).filter(not(testPath::equals))) {
-            final var series = seriesStrm.collect(Collectors.toUnmodifiableList());
+            final var series = seriesStrm.toList();
             for (final Path serie : series)
                 createAndFillTitledPanes(serie);
         } catch (final IOException ex) {
@@ -66,7 +66,7 @@ public final class MainController implements Initializable {
         final List<Path> parts;
 
         try (var partsStrm = Files.walk(pathToSeries).filter(Files::isDirectory).filter(not(pathToSeries::equals))) {
-            parts = partsStrm.collect(Collectors.toUnmodifiableList());
+            parts = partsStrm.toList();
         }
 
         final var accordion = new Accordion();
@@ -155,10 +155,9 @@ public final class MainController implements Initializable {
             files.map(Path::toUri).map(URI::toString).map(Media::new).forEach(tracks::add);
 
             final ObservableList<Session> sessions = FXCollections.observableArrayList();
-            sessions.add(new Session(partName, 1, tracks.get(0)));
-            for (int i = 1; i < tracks.size(); i++)
+            for (var i = 0; i < tracks.size(); i++)
                 sessions.add(new Session(partName, i + 1, tracks.get(i)));
-            return sessions;
+            return FXCollections.unmodifiableObservableList(sessions);
         }
     }
 
