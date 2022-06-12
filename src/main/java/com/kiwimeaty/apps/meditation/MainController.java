@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import com.kiwimeaty.apps.meditation.util.JsonUtil;
 import com.kiwimeaty.apps.meditation.util.Session;
 import com.kiwimeaty.apps.meditation.util.UnlockList;
 import com.kiwimeaty.apps.meditation.util.UnlockList.ElementState;
@@ -45,14 +46,15 @@ public final class MainController implements Initializable {
 
     private Map<String, UnlockList<Session>> sessionsByPart = new HashMap<>();
 
+    // TODO from test-tracks to real tracks
+    private final Path tracksPath = Path.of("src", "main", "resources", "com", "kiwimeaty",
+            "apps", "meditation", "test-tracks");
+    // private final Path tracksPath = Path.of("tracks");
+
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        // TODO from test-tracks to real tracks
-        final var testPath = Path.of("src", "main", "resources", "com", "kiwimeaty",
-                "apps", "meditation", "test-tracks");
-        // final var tracksPath = Path.of("tracks");
-
-        try (var seriesStrm = Files.walk(testPath, 1).filter(Files::isDirectory).filter(not(testPath::equals))) {
+        try (var seriesStrm = Files.walk(this.tracksPath, 1).filter(Files::isDirectory)
+                .filter(not(this.tracksPath::equals))) {
             final var series = seriesStrm.toList();
             for (final Path serie : series)
                 createAndFillTitledPanes(serie);
@@ -123,15 +125,18 @@ public final class MainController implements Initializable {
         return resetButton;
     }
 
-    private void showResetConfirmation(final UnlockList<Session> sessions) {
+    private void showResetConfirmation(final UnlockList<Session> sessions) throws IllegalArgumentException {
         final var alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Reset Part");
         alert.setHeaderText("Are you sure you want to reset this part?");
         alert.setContentText("You'll have to redo each session to unlock them again.");
 
         final Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
+        if (result.get() == ButtonType.OK) {
             sessions.resetList();
+            // storeProgressIntoFile(sessions.getLatestUnlockedElement().part(),
+            // sessions.getIndexOfLatestUnlockedElement());
+        }
         alert.close();
     }
 
@@ -212,13 +217,16 @@ public final class MainController implements Initializable {
         player.getStage().setOnCloseRequest(event -> {
             final var hasUnlockedNextSession = sessions.unlockNextElement(session);
             if (hasUnlockedNextSession)
-                storeProgressIntoFile(session.part(),
-                        sessions.getIndexOfLatestUnlockedElement());
+                try {
+                    JsonUtil.storeToJson(this.tracksPath, session.part(),
+                            sessions.getIndexOfLatestUnlockedElement());
+                } catch (final IOException ex) {
+                    final var alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Store data.json");
+                    alert.setHeaderText("There was an error storing data to data.json");
+                    alert.setContentText(ex.toString());
+                    alert.close();
+                }
         });
-    }
-
-    private void storeProgressIntoFile(final String partName, final int indexOfLatestUnlockedElement) {
-        // TODO: store in json
-        System.out.println(partName + ": " + indexOfLatestUnlockedElement);
     }
 }

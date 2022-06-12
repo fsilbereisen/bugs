@@ -9,9 +9,11 @@
     <properties>
         <javafx-version>19-ea+7</javafx-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>16</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+
+        <json-api.version>1.1.4</json-api.version>
 
         <!-- versions of plugins -->
         <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
@@ -52,6 +54,13 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.7.1</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- misc -->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>${json-api.version}</version>
         </dependency>
     </dependencies>
 

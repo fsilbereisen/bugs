@@ -7,6 +7,9 @@ module com.kiwimeaty.apps.meditation {
 
     requires transitive javafx.graphics;
 
+    // third party
+    requires transitive java.json;
+
     opens com.kiwimeaty.apps.meditation to javafx.fxml;
 
     exports com.kiwimeaty.apps.meditation;
