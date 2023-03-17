@@ -1,5 +1,8 @@
 package com.kiwimeaty.apps.meditation.util;
 
+import com.kiwimeaty.apps.meditation.util.UnlockList.ElementState;
+
+import javafx.beans.property.ObjectProperty;
 import javafx.scene.media.Media;
 
 /**
@@ -9,5 +12,8 @@ import javafx.scene.media.Media;
  * @param day   the day of the part
  * @param track the file
  */
-public record Session(String part, int day, Media track) {//
+public record Session(Part part, int day, Media track) {//
+    public ObjectProperty<ElementState> getState() {
+        return this.part.sessions().getState(this);
+    }
 }

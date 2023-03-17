@@ -1,5 +1,6 @@
 package com.kiwimeaty.apps.meditation.util;
 
+import java.util.AbstractList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -13,7 +14,30 @@ import javafx.beans.property.SimpleObjectProperty;
  * 
  * @param <E> the element type for the unlockList
  */
-public final class UnlockList<E> {
+public final class UnlockList<E> extends AbstractList<E> {
+
+    public static enum ElementState {
+        /** This element is still locked. */
+        LOCKED,
+        /** This element is unlocked. */
+        UNLOCKED,
+        /** This is the latest unlocked element. */
+        LATEST_UNLOCKED
+    }
+
+    /**
+     * Item includes Element and its state.
+     */
+    private final class Item {
+        private final E elem;
+        private final ObjectProperty<ElementState> state;
+
+        Item(final E elem) {
+            this.elem = elem;
+            this.state = new SimpleObjectProperty<>(ElementState.LOCKED);
+        }
+
+    }
 
     private final List<Item> list;
 
@@ -81,26 +105,14 @@ public final class UnlockList<E> {
                 .orElseThrow(() -> new NoSuchElementException("no such element: " + currentElement));
     }
 
-    public enum ElementState {
-        /** This element is still locked. */
-        LOCKED,
-        /** This element is unlocked. */
-        UNLOCKED,
-        /** This is the latest unlocked element. */
-        LATEST_UNLOCKED
+    // ########### unmodifiable list >> see javadoc of AbstractList<E>
+    @Override
+    public int size() {
+        return this.list.size();
     }
 
-    /**
-     * Item includes Element and its state.
-     */
-    private final class Item {
-        private final E elem;
-        private final ObjectProperty<ElementState> state;
-
-        Item(final E elem) {
-            this.elem = elem;
-            this.state = new SimpleObjectProperty<>(ElementState.LOCKED);
-        }
-
+    @Override
+    public E get(int index) {
+        return this.list.get(index).elem;
     }
 }

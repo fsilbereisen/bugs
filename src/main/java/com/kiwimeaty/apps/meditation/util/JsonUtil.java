@@ -23,7 +23,7 @@ public final class JsonUtil {
 
     private static final String PARTS = "parts";
     private static final String NAME = "name";
-    private static final String INDEX_OF_LATEST_UNLOCKED_ELEMENT = "indexOfLatestUnlocked";
+    private static final String LATEST_UNLOCKED_INDEX = "latestUnlockedIndex";
 
     static {
         final var config = new HashMap<String, Object>();
@@ -31,7 +31,7 @@ public final class JsonUtil {
         writerFactory = Json.createWriterFactory(config);
     }
 
-    public static JsonObject readFile(final Path path) throws IOException {
+    private static JsonObject readFile(final Path path) throws IOException {
         // final JsonArray obj;
         final JsonObject obj;
         final var json = Files.readString(path);
@@ -43,7 +43,7 @@ public final class JsonUtil {
         return obj;
     }
 
-    public static void storeToJson(final Path pathToJson, final String part, final int indexOfLatestUnlockedElement)
+    public static void storeToJson(final Path pathToJson, final Part part, final int indexOfLatestUnlockedElement)
             throws IOException {
         final var file = pathToJson.resolve("data.json");
         final var currentRootJsonObject = readFile(file);
@@ -60,21 +60,21 @@ public final class JsonUtil {
     }
     // ###################################################
 
-    private static JsonObject updateJsonObject(final JsonObject currentJsonObject, final String part,
+    private static JsonObject updateJsonObject(final JsonObject currentJsonObject, final Part part,
             final int indexOfLatestUnlockedElement) {
         final var array = currentJsonObject.getJsonArray(PARTS);
         final var newArray = updateJsonArray(array, part, indexOfLatestUnlockedElement);
         return Json.createObjectBuilder().add(PARTS, newArray).build();
     }
 
-    private static JsonArray updateJsonArray(final JsonArray array, final String part,
+    private static JsonArray updateJsonArray(final JsonArray array, final Part part,
             final int indexOfLatestUnlockedElement) {
         // JsonArray is immutable >> transfer to map
         final var map = array.stream().map(JsonValue::asJsonObject)
                 .collect(Collectors.toMap(obj -> obj.getString(NAME),
-                        obj -> obj.getInt(INDEX_OF_LATEST_UNLOCKED_ELEMENT)));
+                        obj -> obj.getInt(LATEST_UNLOCKED_INDEX)));
         // modify/add entry
-        map.merge(part, indexOfLatestUnlockedElement, (oldI, newI) -> newI);
+        map.merge(part.name(), indexOfLatestUnlockedElement, (oldInt, newInt) -> newInt);
         // retransfer
         final var listOfObjects = map.entrySet().stream().map(entry -> jsonObject(entry.getKey(), entry.getValue()))
                 .toList();
@@ -86,7 +86,7 @@ public final class JsonUtil {
     private static JsonObject jsonObject(final String part, final int indexOfLatestUnlockedElement) {
         final var builder = Json.createObjectBuilder()//
                 .add(NAME, part)//
-                .add(INDEX_OF_LATEST_UNLOCKED_ELEMENT, indexOfLatestUnlockedElement);
+                .add(LATEST_UNLOCKED_INDEX, indexOfLatestUnlockedElement);
         return builder.build();
     }
 
