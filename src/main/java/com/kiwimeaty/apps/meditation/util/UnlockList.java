@@ -16,7 +16,7 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public final class UnlockList<E> extends AbstractList<E> {
 
-    public static enum ElementState {
+    public enum ElementState {
         /** This element is still locked. */
         LOCKED,
         /** This element is unlocked. */
@@ -112,7 +112,7 @@ public final class UnlockList<E> extends AbstractList<E> {
     }
 
     @Override
-    public E get(int index) {
+    public E get(final int index) {
         return this.list.get(index).elem;
     }
 }

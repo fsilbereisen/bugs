@@ -2,7 +2,7 @@
     "parts": [
         {
             "name": "Take 10",
-            "latestUnlockedIndex": 3
+            "index": 2
         }
     ]
 }

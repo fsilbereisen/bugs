@@ -14,13 +14,13 @@ import javafx.scene.media.Media;
  */
 public final class Part {
     private final String name;
-    private final String seriesName;
+    private final Series series;
 
     private final UnlockList<Session> sessions;
 
-    public Part(final Path path) throws IOException {
+    public Part(final Series series, final Path path) throws IOException {
+        this.series = series;
         this.name = path.getFileName().toString();
-        this.seriesName = path.getParent().getFileName().toString();
         this.sessions = createSessions(path);
     }
 
@@ -41,8 +41,8 @@ public final class Part {
         return this.name;
     }
 
-    public String seriesName() {
-        return this.seriesName;
+    public Series series() {
+        return this.series;
     }
 
     public UnlockList<Session> sessions() {

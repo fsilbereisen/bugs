@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 import com.kiwimeaty.apps.meditation.util.JsonUtil;
 import com.kiwimeaty.apps.meditation.util.Part;
+import com.kiwimeaty.apps.meditation.util.Series;
 import com.kiwimeaty.apps.meditation.util.Session;
 import com.kiwimeaty.apps.meditation.util.UnlockList;
 import com.kiwimeaty.apps.meditation.util.UnlockList.ElementState;
@@ -41,7 +42,7 @@ public final class MainController implements Initializable {
     @FXML
     private TabPane tabs;
 
-    private final List<Part> parts = new ArrayList<>();
+    private final List<Series> series = new ArrayList<>();
 
     // TODO from test-tracks to real tracks
     private final Path tracksPath = Path.of("src", "main", "resources", "com", "kiwimeaty",
@@ -52,27 +53,20 @@ public final class MainController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
         try (var seriesStrm = Files.walk(this.tracksPath, 1).filter(Files::isDirectory)
                 .filter(not(this.tracksPath::equals))) {
-            final var series = seriesStrm.toList();
-            for (final Path serie : series)
-                createAndFillTitledPanes(serie);
+            for (final Path seriesPath : seriesStrm.toList()) {
+                final var series = new Series(seriesPath);
+                this.series.add(series);
+                createAndFillTitledPanes(series);
+            }
         } catch (final IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    private void createAndFillTitledPanes(final Path pathToSeries) throws IOException {
-
-        final List<Path> parts1;
-
-        try (var partsStrm = Files.walk(pathToSeries).filter(Files::isDirectory).filter(not(pathToSeries::equals))) {
-            parts1 = partsStrm.toList();
-        }
+    private void createAndFillTitledPanes(final Series series) throws IOException {
 
         final var accordion = new Accordion();
-        for (final Path partPath : parts1) {
-            final var part = new Part(partPath);
-            this.parts.add(part);
-
+        for (final Part part : series.parts()) {
             final var listView = createListView(part);
 
             final var nextSessionButton = createNextSessionButton(part.sessions());
@@ -90,7 +84,7 @@ public final class MainController implements Initializable {
 
             accordion.getPanes().add(new TitledPane(part.name(), grid));
         }
-        this.tabs.getTabs().add(new Tab(pathToSeries.getFileName().toString(), accordion));
+        this.tabs.getTabs().add(new Tab(series.name(), accordion));
     }
 
     private Button createNextSessionButton(final UnlockList<Session> sessions) {
@@ -143,7 +137,7 @@ public final class MainController implements Initializable {
 
         listView.setItems(FXCollections.observableArrayList(part.sessions()));
         // eg: .... [Basics:Take10]
-        listView.setId("[%s:%s]".formatted(part.seriesName(), part.name()));
+        listView.setId("[%s:%s]".formatted(part.series().name(), part.name()));
         return listView;
     }
 
@@ -198,8 +192,7 @@ public final class MainController implements Initializable {
             final var hasUnlockedNextSession = sessions.unlockNextElement(session);
             if (hasUnlockedNextSession)
                 try {
-                    JsonUtil.storeToJson(this.tracksPath, session.part(),
-                            sessions.getIndexOfLatestUnlockedElement());
+                    JsonUtil.storeToJson(this.tracksPath, session);
                 } catch (final IOException ex) {
                     final var alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Store data.json");

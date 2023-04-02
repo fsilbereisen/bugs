@@ -23,7 +23,7 @@ public final class JsonUtil {
 
     private static final String PARTS = "parts";
     private static final String NAME = "name";
-    private static final String LATEST_UNLOCKED_INDEX = "latestUnlockedIndex";
+    private static final String LATEST_UNLOCKED_INDEX = "index";
 
     static {
         final var config = new HashMap<String, Object>();
@@ -43,12 +43,12 @@ public final class JsonUtil {
         return obj;
     }
 
-    public static void storeToJson(final Path pathToJson, final Part part, final int indexOfLatestUnlockedElement)
+    public static void storeToJson(final Path pathToJson, final Session session)
             throws IOException {
         final var file = pathToJson.resolve("data.json");
         final var currentRootJsonObject = readFile(file);
         System.out.println("before: " + currentRootJsonObject);
-        final var newRootJsonObject = updateJsonObject(currentRootJsonObject, part, indexOfLatestUnlockedElement);
+        final var newRootJsonObject = updateJsonObject(currentRootJsonObject, session);
         System.out.println("after: " + newRootJsonObject);
         System.out.println();
         try {
@@ -60,21 +60,20 @@ public final class JsonUtil {
     }
     // ###################################################
 
-    private static JsonObject updateJsonObject(final JsonObject currentJsonObject, final Part part,
-            final int indexOfLatestUnlockedElement) {
+    private static JsonObject updateJsonObject(final JsonObject currentJsonObject, final Session session) {
         final var array = currentJsonObject.getJsonArray(PARTS);
-        final var newArray = updateJsonArray(array, part, indexOfLatestUnlockedElement);
+        final var newArray = updateJsonArray(array, session);
         return Json.createObjectBuilder().add(PARTS, newArray).build();
     }
 
-    private static JsonArray updateJsonArray(final JsonArray array, final Part part,
-            final int indexOfLatestUnlockedElement) {
+    private static JsonArray updateJsonArray(final JsonArray array, final Session session) {
         // JsonArray is immutable >> transfer to map
         final var map = array.stream().map(JsonValue::asJsonObject)
                 .collect(Collectors.toMap(obj -> obj.getString(NAME),
                         obj -> obj.getInt(LATEST_UNLOCKED_INDEX)));
         // modify/add entry
-        map.merge(part.name(), indexOfLatestUnlockedElement, (oldInt, newInt) -> newInt);
+        map.merge(session.part().name(), session.part().sessions().getIndexOfLatestUnlockedElement(),
+                (oldInt, newInt) -> newInt);
         // retransfer
         final var listOfObjects = map.entrySet().stream().map(entry -> jsonObject(entry.getKey(), entry.getValue()))
                 .toList();
