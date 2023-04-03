@@ -5,12 +5,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
  * A series is a whole meditation pack.
  */
 public final class Series {
+
+    // XXX for json2java
+    public static Optional<Series> findSeries(final String seriesName, final List<Series> series) {
+        if (seriesName == null)
+            return Optional.empty();
+        return series.stream().filter(s -> seriesName.equals(s.name())).findAny();
+    }
+
     private final String name;
     private final List<Part> parts;
 
@@ -31,7 +40,13 @@ public final class Series {
             }
             return parts1;
         }
+    }
 
+    // XXX for json2java
+    public Optional<Part> findPart(final String partName) {
+        if (partName == null)
+            return Optional.empty();
+        return this.parts.stream().filter(p -> partName.equals(p.name())).findAny();
     }
 
     public String name() {

@@ -54,19 +54,21 @@ public final class MainController implements Initializable {
         try (var seriesStrm = Files.walk(this.tracksPath, 1).filter(Files::isDirectory)
                 .filter(not(this.tracksPath::equals))) {
             for (final Path seriesPath : seriesStrm.toList()) {
-                final var series = new Series(seriesPath);
-                this.series.add(series);
-                createAndFillTitledPanes(series);
+                final var series1 = new Series(seriesPath);
+                this.series.add(series1);
+                createAndFillTitledPanes(series1);
             }
+            // TODO read json + update part states here (mb first without series... (if
+            // easy without them))
         } catch (final IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    private void createAndFillTitledPanes(final Series series) throws IOException {
+    private void createAndFillTitledPanes(final Series series1) throws IOException {
 
         final var accordion = new Accordion();
-        for (final Part part : series.parts()) {
+        for (final Part part : series1.parts()) {
             final var listView = createListView(part);
 
             final var nextSessionButton = createNextSessionButton(part.sessions());
@@ -84,7 +86,7 @@ public final class MainController implements Initializable {
 
             accordion.getPanes().add(new TitledPane(part.name(), grid));
         }
-        this.tabs.getTabs().add(new Tab(series.name(), accordion));
+        this.tabs.getTabs().add(new Tab(series1.name(), accordion));
     }
 
     private Button createNextSessionButton(final UnlockList<Session> sessions) {

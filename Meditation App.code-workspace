@@ -36,6 +36,7 @@
                 "command": "versions:display-property-updates -U"
             },
         ],
-        "java.configuration.updateBuildConfiguration": "interactive"
+        "java.configuration.updateBuildConfiguration": "interactive",
+        "java.autobuild.enabled": true
     },
 }

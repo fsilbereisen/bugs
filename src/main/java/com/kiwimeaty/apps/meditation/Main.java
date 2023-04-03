@@ -25,7 +25,6 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
-        // TODO read json (is it in here??)
         final var url = getClass().getResource("main.fxml");
         final var loader = new FXMLLoader(url, bundle);
         final var root = loader.<Parent>load();

@@ -64,8 +64,7 @@ public final class UnlockList<E> extends AbstractList<E> {
     }
 
     public void resetList() {
-        this.list.forEach(item -> item.state.set(ElementState.LOCKED));
-        this.list.get(0).state.set(ElementState.LATEST_UNLOCKED);
+        setIndexOfLatestUnlockedElement(0);
     }
 
     /**
@@ -84,6 +83,11 @@ public final class UnlockList<E> extends AbstractList<E> {
 
     public int getIndexOfLatestUnlockedElement() {
         return this.list.indexOf(getItem(getLatestUnlockedElement()));
+    }
+
+    public void setIndexOfLatestUnlockedElement(final int latestUnlockedIndex) {
+        this.list.forEach(item -> item.state.set(ElementState.LOCKED));
+        this.list.get(latestUnlockedIndex).state.set(ElementState.LATEST_UNLOCKED);
     }
 
     /**

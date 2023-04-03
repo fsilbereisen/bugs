@@ -37,6 +37,11 @@ public final class Part {
         }
     }
 
+    // XXX for json2java
+    public void setIndexOfLatestUnlockedElement(final int value) {
+        this.sessions.setIndexOfLatestUnlockedElement(value);
+    }
+
     public String name() {
         return this.name;
     }

@@ -61,6 +61,7 @@ public final class JsonUtil {
     // ###################################################
 
     private static JsonObject updateJsonObject(final JsonObject currentJsonObject, final Session session) {
+        // TODO add seriesArray (mb hard)
         final var array = currentJsonObject.getJsonArray(PARTS);
         final var newArray = updateJsonArray(array, session);
         return Json.createObjectBuilder().add(PARTS, newArray).build();

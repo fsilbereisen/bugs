@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.kiwimeaty.apps</groupId>
@@ -7,7 +9,7 @@
     <name>My meditation app</name>
 
     <properties>
-        <javafx-version>19-ea+7</javafx-version>
+        <javafx-version>21-ea+5</javafx-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
@@ -16,8 +18,8 @@
         <json-api.version>1.1.4</json-api.version>
 
         <!-- versions of plugins -->
-        <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
-        <maven-checkstyle.version>10.2</maven-checkstyle.version>
+        <maven-checkstyle-plugin.version>3.2.1</maven-checkstyle-plugin.version>
+        <maven-checkstyle.version>10.9.3</maven-checkstyle.version>
     </properties>
 
     <dependencies>
@@ -96,7 +98,8 @@
                 <configuration>
                     <configLocation>checkstyle/checkstyle-rules.xml</configLocation>
                     <violationSeverity>warning</violationSeverity>
-                    <excludes>**/module-info.java</excludes> <!-- See https://github.com/checkstyle/checkstyle/issues/8240 -->
+                    <excludes>**/module-info.java</excludes> <!-- See
+                    https://github.com/checkstyle/checkstyle/issues/8240 -->
                     <suppressionsLocation>checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
                 </configuration>
             </plugin>
