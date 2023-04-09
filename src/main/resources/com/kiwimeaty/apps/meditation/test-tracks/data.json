@@ -1,8 +1,13 @@
 {
-    "parts": [
+    "series": [
         {
-            "name": "Take 10",
-            "index": 2
+            "seriesName": "Basics",
+            "parts": [
+                {
+                    "part": "Take 10",
+                    "index": 2
+                }
+            ]
         }
     ]
 }

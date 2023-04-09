@@ -58,8 +58,7 @@ public final class MainController implements Initializable {
                 this.series.add(series1);
                 createAndFillTitledPanes(series1);
             }
-            // TODO read json + update part states here (mb first without series... (if
-            // easy without them))
+            // TODO read json + update part states here
         } catch (final IOException ex) {
             throw new UncheckedIOException(ex);
         }

@@ -3,7 +3,6 @@ package com.kiwimeaty.apps.meditation.util;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,8 +20,10 @@ import javax.json.stream.JsonParsingException;
 public final class JsonUtil {
     private static final JsonWriterFactory writerFactory;
 
+    private static final String SERIES = "series";
     private static final String PARTS = "parts";
-    private static final String NAME = "name";
+    private static final String SERIES_NAME = "seriesName";
+    private static final String PART_NAME = "part";
     private static final String LATEST_UNLOCKED_INDEX = "index";
 
     static {
@@ -32,60 +33,82 @@ public final class JsonUtil {
     }
 
     private static JsonObject readFile(final Path path) throws IOException {
-        // final JsonArray obj;
-        final JsonObject obj;
         final var json = Files.readString(path);
         try (var in = new StringReader(json); var reader = Json.createReader(in)) {
-            obj = reader.readObject();
+            return reader.readObject();
         } catch (final JsonParsingException ex) {
             throw new IOException(ex);
         }
-        return obj;
     }
 
     public static void storeToJson(final Path pathToJson, final Session session)
             throws IOException {
         final var file = pathToJson.resolve("data.json");
-        final var currentRootJsonObject = readFile(file);
-        System.out.println("before: " + currentRootJsonObject);
-        final var newRootJsonObject = updateJsonObject(currentRootJsonObject, session);
-        System.out.println("after: " + newRootJsonObject);
+        final var currentDataJsonObject = readFile(file);
+        System.out.println("before: " + currentDataJsonObject);
+        final var newDataJsonObject = updateDataJson(currentDataJsonObject, session);
+        System.out.println("after: " + newDataJsonObject);
         System.out.println();
-        try {
-            Files.writeString(file, jsonPrettyPrint(newRootJsonObject),
-                    StandardCharsets.UTF_8);
-        } catch (final IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-    // ###################################################
-
-    private static JsonObject updateJsonObject(final JsonObject currentJsonObject, final Session session) {
-        // TODO add seriesArray (mb hard)
-        final var array = currentJsonObject.getJsonArray(PARTS);
-        final var newArray = updateJsonArray(array, session);
-        return Json.createObjectBuilder().add(PARTS, newArray).build();
+        Files.writeString(file, jsonPrettyPrint(newDataJsonObject),
+                StandardCharsets.UTF_8);
     }
 
-    private static JsonArray updateJsonArray(final JsonArray array, final Session session) {
+    // ########################### helper #################################
+    private static JsonObject updateDataJson(final JsonObject currentJsonObject, final Session session) {
+        final var seriesArray = currentJsonObject.getJsonArray(SERIES);
+        final var newSeriesArray = updateSeriesArray(seriesArray, session);
+        return Json.createObjectBuilder().add(SERIES, newSeriesArray).build();
+    }
+
+    private static JsonArray updateSeriesArray(final JsonArray array, final Session session) {
         // JsonArray is immutable >> transfer to map
         final var map = array.stream().map(JsonValue::asJsonObject)
-                .collect(Collectors.toMap(obj -> obj.getString(NAME),
-                        obj -> obj.getInt(LATEST_UNLOCKED_INDEX)));
-        // modify/add entry
-        map.merge(session.part().name(), session.part().sessions().getIndexOfLatestUnlockedElement(),
-                (oldInt, newInt) -> newInt);
+                .collect(Collectors.toMap(obj -> obj.getString(SERIES_NAME),
+                        obj -> obj.getJsonArray(PARTS)));
+
+        final var seriesName = session.part().series().name();
+        final var parts = map.get(seriesName);
+        // modify parts + add in map
+        final var newParts = updatePartsArray(parts, session);
+        map.merge(seriesName, newParts, (oldParts, newParts1) -> newParts1);
+
         // retransfer
-        final var listOfObjects = map.entrySet().stream().map(entry -> jsonObject(entry.getKey(), entry.getValue()))
+        final var listOfObjects = map.entrySet().stream().map(entry -> array2jsonObj(entry.getKey(), entry.getValue()))
                 .toList();
         final var newArrayBuilder = Json.createArrayBuilder();
         listOfObjects.forEach(obj -> newArrayBuilder.add(obj));
         return newArrayBuilder.build();
     }
 
-    private static JsonObject jsonObject(final String part, final int indexOfLatestUnlockedElement) {
+    private static JsonArray updatePartsArray(final JsonArray partsArray, final Session session) {
+        // JsonArray is immutable >> transfer to map
+        final var map = partsArray != null ? //
+                partsArray.stream().map(JsonValue::asJsonObject)
+                        .collect(Collectors.toMap(obj -> obj.getString(PART_NAME),
+                                obj -> obj.getInt(LATEST_UNLOCKED_INDEX)))
+                // if no parts array exists yet in json, create it
+                : new HashMap<String, Integer>();
+        // modify/add entry
+        map.merge(session.part().name(), session.part().sessions().getIndexOfLatestUnlockedElement(),
+                (oldInt, newInt) -> newInt);
+        // retransfer
+        final var listOfObjects = map.entrySet().stream().map(entry -> int2jsonObj(entry.getKey(), entry.getValue()))
+                .toList();
+        final var newArrayBuilder = Json.createArrayBuilder();
+        listOfObjects.forEach(obj -> newArrayBuilder.add(obj));
+        return newArrayBuilder.build();
+    }
+
+    private static JsonObject array2jsonObj(final String seriesName, final JsonArray parts) {
         final var builder = Json.createObjectBuilder()//
-                .add(NAME, part)//
+                .add(SERIES_NAME, seriesName)//
+                .add(PARTS, parts);
+        return builder.build();
+    }
+
+    private static JsonObject int2jsonObj(final String partName, final int indexOfLatestUnlockedElement) {
+        final var builder = Json.createObjectBuilder()//
+                .add(PART_NAME, partName)//
                 .add(LATEST_UNLOCKED_INDEX, indexOfLatestUnlockedElement);
         return builder.build();
     }
