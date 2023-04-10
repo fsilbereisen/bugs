@@ -10,16 +10,16 @@ import java.util.List;
 import javafx.scene.media.Media;
 
 /**
- * A part is a list of all sessions.
+ * A part is a list of all sessions. It is a part of a whole course.
  */
 public final class Part {
     private final String name;
-    private final Series series;
+    private final Course course;
 
     private final UnlockList<Session> sessions;
 
-    public Part(final Series series, final Path path) throws IOException {
-        this.series = series;
+    public Part(final Course course, final Path path) throws IOException {
+        this.course = course;
         this.name = path.getFileName().toString();
         this.sessions = createSessions(path);
     }
@@ -45,8 +45,8 @@ public final class Part {
         return this.name;
     }
 
-    public Series series() {
-        return this.series;
+    public Course course() {
+        return this.course;
     }
 
     public UnlockList<Session> sessions() {

@@ -1,11 +1,11 @@
 {
-    "series": [
+    "courses": [
         {
-            "seriesName": "Basics",
+            "course": "Basics",
             "parts": [
                 {
                     "part": "Take 10",
-                    "index": 2
+                    "index": 3
                 }
             ]
         }

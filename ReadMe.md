@@ -2,7 +2,7 @@
 
 ## Structure
 
-1. Basics (= **series1**)
+1. Basics (= **course1**)
    - Take 10 (= **part1**)
      - **session1** (including partName, day1, track1)
      - session2

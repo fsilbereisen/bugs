@@ -9,28 +9,28 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * A series is a whole meditation pack.
+ * A course is a whole meditation pack. It consists of one or more parts.
  */
-public final class Series {
+public final class Course {
 
-    public static Optional<Series> findSerie(final String seriesName, final List<Series> series) {
-        if (seriesName == null)
+    public static Optional<Course> findCourse(final String courseName, final List<Course> courses) {
+        if (courseName == null)
             return Optional.empty();
-        return series.stream().filter(s -> seriesName.equals(s.name())).findAny();
+        return courses.stream().filter(s -> courseName.equals(s.name())).findAny();
     }
 
     private final String name;
     private final List<Part> parts;
 
-    public Series(final Path path) throws IOException {
+    public Course(final Path path) throws IOException {
         this.name = path.getFileName().toString();
         this.parts = getParts(path);
     }
 
-    private List<Part> getParts(final Path seriesPath)
+    private List<Part> getParts(final Path coursePath)
             throws IOException {
-        try (var partsStrm = Files.walk(seriesPath).filter(Files::isDirectory)
-                .filter(Predicate.not(seriesPath::equals))) {
+        try (var partsStrm = Files.walk(coursePath).filter(Files::isDirectory)
+                .filter(Predicate.not(coursePath::equals))) {
 
             final List<Part> parts1 = new ArrayList<>();
             for (final Path partPath : partsStrm.toList()) {

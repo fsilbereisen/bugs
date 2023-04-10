@@ -21,9 +21,9 @@ import javax.json.stream.JsonParsingException;
 public final class JsonUtil {
     private static final JsonWriterFactory writerFactory;
 
-    private static final String SERIES = "series";
+    private static final String COURSE = "courses";
     private static final String PARTS = "parts";
-    private static final String SERIES_NAME = "seriesName";
+    private static final String COURSE_NAME = "course";
     private static final String PART_NAME = "part";
     private static final String LATEST_UNLOCKED_INDEX = "index";
 
@@ -54,26 +54,26 @@ public final class JsonUtil {
                 StandardCharsets.UTF_8);
     }
 
-    public static void updateSeriesFromJsonFile(final Path pathToJson, final List<Series> allSeries)
+    public static void updateCoursesFromJsonFile(final Path pathToJson, final List<Course> courses)
             throws IOException {
         final var file = pathToJson.resolve("data.json");
         final var currentDataJsonObject = readFile(file);
-        updateIndexes(currentDataJsonObject, allSeries);
+        updateIndexes(currentDataJsonObject, courses);
     }
 
     // ########################### helper #################################
-    private static void updateIndexes(final JsonObject currentDataJsonObject, final List<Series> allSeries) {
-        final var seriesArray = currentDataJsonObject.getJsonArray(SERIES);
-        seriesArray.stream().map(JsonValue::asJsonObject)
-                .forEach(serieObject -> {
-                    final var serieName = serieObject.getString(SERIES_NAME);
-                    final var jsonSerie = Series.findSerie(serieName, allSeries);
-                    // TODO ifPresentOrElse() >> or else: delete jsonSerie
-                    jsonSerie.ifPresent(existingSerie -> {
-                        final var partsOfSerieArray = serieObject.getJsonArray(PARTS);
-                        partsOfSerieArray.stream().map(JsonValue::asJsonObject).forEach(partObject -> {
+    private static void updateIndexes(final JsonObject currentDataJsonObject, final List<Course> courses) {
+        final var coursesArray = currentDataJsonObject.getJsonArray(COURSE);
+        coursesArray.stream().map(JsonValue::asJsonObject)
+                .forEach(courseObject -> {
+                    final var courseName = courseObject.getString(COURSE_NAME);
+                    final var jsonCourse = Course.findCourse(courseName, courses);
+                    // TODO ifPresentOrElse() >> or else: delete jsonCourse
+                    jsonCourse.ifPresent(existingCourse -> {
+                        final var partsOfCourseArray = courseObject.getJsonArray(PARTS);
+                        partsOfCourseArray.stream().map(JsonValue::asJsonObject).forEach(partObject -> {
                             final var partName = partObject.getString(PART_NAME);
-                            final var jsonPart = existingSerie.findPart(partName);
+                            final var jsonPart = existingCourse.findPart(partName);
                             // TODO ifPresentOrElse() >> or else: delete jsonPart
                             jsonPart.ifPresent(existingPart -> existingPart
                                     .setIndexOfLatestUnlockedElement(partObject.getInt(LATEST_UNLOCKED_INDEX)));
@@ -83,22 +83,22 @@ public final class JsonUtil {
     }
 
     private static JsonObject updateDataJson(final JsonObject currentJsonObject, final Session session) {
-        final var seriesArray = currentJsonObject.getJsonArray(SERIES);
-        final var newSeriesArray = updateSeriesArray(seriesArray, session);
-        return Json.createObjectBuilder().add(SERIES, newSeriesArray).build();
+        final var coursesArray = currentJsonObject.getJsonArray(COURSE);
+        final var newCoursesArray = updateCoursesArray(coursesArray, session);
+        return Json.createObjectBuilder().add(COURSE, newCoursesArray).build();
     }
 
-    private static JsonArray updateSeriesArray(final JsonArray array, final Session session) {
+    private static JsonArray updateCoursesArray(final JsonArray array, final Session session) {
         // JsonArray is immutable >> transfer to map
         final var map = array.stream().map(JsonValue::asJsonObject)
-                .collect(Collectors.toMap(obj -> obj.getString(SERIES_NAME),
+                .collect(Collectors.toMap(obj -> obj.getString(COURSE_NAME),
                         obj -> obj.getJsonArray(PARTS)));
 
-        final var seriesName = session.part().series().name();
-        final var parts = map.get(seriesName);
+        final var courseName = session.part().course().name();
+        final var parts = map.get(courseName);
         // modify parts + add in map
         final var newParts = updatePartsArray(parts, session);
-        map.merge(seriesName, newParts, (oldParts, newParts1) -> newParts1);
+        map.merge(courseName, newParts, (oldParts, newParts1) -> newParts1);
 
         // retransfer
         final var listOfObjects = map.entrySet().stream().map(entry -> array2jsonObj(entry.getKey(), entry.getValue()))
@@ -127,9 +127,9 @@ public final class JsonUtil {
         return newArrayBuilder.build();
     }
 
-    private static JsonObject array2jsonObj(final String seriesName, final JsonArray parts) {
+    private static JsonObject array2jsonObj(final String courseName, final JsonArray parts) {
         final var builder = Json.createObjectBuilder()//
-                .add(SERIES_NAME, seriesName)//
+                .add(COURSE_NAME, courseName)//
                 .add(PARTS, parts);
         return builder.build();
     }
