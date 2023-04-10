@@ -125,9 +125,17 @@ public final class MainController implements Initializable {
 
         final Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            part.sessions().resetList(); // TODO store reset
-            // storeProgressIntoFile(sessions.getLatestUnlockedElement().part(),
-            // sessions.getIndexOfLatestUnlockedElement());
+            part.sessions().resetList();
+
+            try { // ................................... first session
+                JsonUtil.storeToJson(this.tracksPath, part.sessions().getLatestUnlockedElement());
+            } catch (final IOException ex) {
+                final var alert1 = new Alert(AlertType.ERROR);
+                alert1.setTitle("Store data.json");
+                alert1.setHeaderText("There was an error storing data to data.json");
+                alert1.setContentText(ex.toString());
+                alert1.close();
+            }
         }
         alert.close();
     }
