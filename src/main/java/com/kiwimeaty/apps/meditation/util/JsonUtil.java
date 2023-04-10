@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.json.Json;
@@ -53,7 +54,34 @@ public final class JsonUtil {
                 StandardCharsets.UTF_8);
     }
 
+    public static void updateSeriesFromJsonFile(final Path pathToJson, final List<Series> allSeries)
+            throws IOException {
+        final var file = pathToJson.resolve("data.json");
+        final var currentDataJsonObject = readFile(file);
+        updateIndexes(currentDataJsonObject, allSeries);
+    }
+
     // ########################### helper #################################
+    private static void updateIndexes(final JsonObject currentDataJsonObject, final List<Series> allSeries) {
+        final var seriesArray = currentDataJsonObject.getJsonArray(SERIES);
+        seriesArray.stream().map(JsonValue::asJsonObject)
+                .forEach(serieObject -> {
+                    final var serieName = serieObject.getString(SERIES_NAME);
+                    final var jsonSerie = Series.findSerie(serieName, allSeries);
+                    // TODO ifPresentOrElse() >> or else: delete jsonSerie
+                    jsonSerie.ifPresent(existingSerie -> {
+                        final var partsOfSerieArray = serieObject.getJsonArray(PARTS);
+                        partsOfSerieArray.stream().map(JsonValue::asJsonObject).forEach(partObject -> {
+                            final var partName = partObject.getString(PART_NAME);
+                            final var jsonPart = existingSerie.findPart(partName);
+                            // TODO ifPresentOrElse() >> or else: delete jsonPart
+                            jsonPart.ifPresent(existingPart -> existingPart
+                                    .setIndexOfLatestUnlockedElement(partObject.getInt(LATEST_UNLOCKED_INDEX)));
+                        });
+                    });
+                });
+    }
+
     private static JsonObject updateDataJson(final JsonObject currentJsonObject, final Session session) {
         final var seriesArray = currentJsonObject.getJsonArray(SERIES);
         final var newSeriesArray = updateSeriesArray(seriesArray, session);

@@ -86,8 +86,13 @@ public final class UnlockList<E> extends AbstractList<E> {
     }
 
     public void setIndexOfLatestUnlockedElement(final int latestUnlockedIndex) {
-        this.list.forEach(item -> item.state.set(ElementState.LOCKED));
+        for (var i = 0; i < latestUnlockedIndex; i++)
+            this.list.get(i).state.set(ElementState.UNLOCKED);
+
         this.list.get(latestUnlockedIndex).state.set(ElementState.LATEST_UNLOCKED);
+
+        for (var i = latestUnlockedIndex + 1; i < this.list.size(); i++)
+            this.list.get(i).state.set(ElementState.LOCKED);
     }
 
     /**

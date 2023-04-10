@@ -13,8 +13,7 @@ import java.util.function.Predicate;
  */
 public final class Series {
 
-    // XXX for json2java
-    public static Optional<Series> findSeries(final String seriesName, final List<Series> series) {
+    public static Optional<Series> findSerie(final String seriesName, final List<Series> series) {
         if (seriesName == null)
             return Optional.empty();
         return series.stream().filter(s -> seriesName.equals(s.name())).findAny();
@@ -42,7 +41,6 @@ public final class Series {
         }
     }
 
-    // XXX for json2java
     public Optional<Part> findPart(final String partName) {
         if (partName == null)
             return Optional.empty();
